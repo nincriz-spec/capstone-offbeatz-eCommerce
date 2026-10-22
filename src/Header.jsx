@@ -1,16 +1,17 @@
+import { Link } from "react-router-dom"
 import "./Header.css";
 
 export default function Header() {
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <a href="/" className="brand">OFFBEATZ</a>
+       <Link to="/" className="brand">OFFBEATZ</Link>
 
         <nav className="nav">
-          <a href="#shop">Shop</a>
-          <a href="#drop">Drop</a>
-          <a href="#story">Story</a>
-          <a href="#contact">Contact</a>
+          <Link to="/shop">Shop</Link>
+          <Link to="#drop">Drop</Link>
+          <Link to="#story">Story</Link>
+          <Link to="#contact">Contact</Link>
         </nav>
 
         <a href="#" className="bag">Bag</a>

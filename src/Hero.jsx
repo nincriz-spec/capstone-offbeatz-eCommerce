@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./Hero.css";
 
 export default function Hero() {
@@ -8,6 +9,9 @@ export default function Hero() {
         alt="Offbeatz Built Different campaign"
         className="hero-image"
       />
+      <div className="hero-content">
+        <Link to="/shop" className="btn">Shop the drop</Link>
+      </div>
     </section>
   );
 }
