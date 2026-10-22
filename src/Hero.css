@@ -1,0 +1,21 @@
+.hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg-soft);
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  max-height: 85vh;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.hero-content {
+  position: absolute;
+  left: 50%;
+  bottom: 2.5rem;
+  transform: translateX(-50%);
+}

@@ -1,0 +1,112 @@
+/* Base Footer Styles */
+.site-footer {
+  background-color: #121212; /* Dark background */
+  color: #ffffff;
+  font-family: inherit;
+  padding-top: 60px;
+  border-top: 1px solid #ff6b35; /* Orange line at the very top as seen in the image */
+}
+
+/* 3-Column Flex Layout */
+.footer-inner {
+  max-width: 1200px; 
+  margin: 0 auto;
+  padding: 0 40px 60px 40px;
+  display: flex;
+  justify-content: space-between; /* Pushes columns to edges */
+  align-items: flex-start; /* Aligns tops of columns */
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+/* Individual Columns */
+.footer-col {
+  flex: 1; /* Allows columns to take up available space evenly */
+}
+
+/* 1. Left Column: Logo */
+.brand-col {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.footer-logo {
+  color: #ff6b35;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 0;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+/* 2. Middle Column: Description */
+.desc-col {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.desc-col p {
+  color: #a0a0a0;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 300px; /* Prevents text from spreading too wide */
+}
+
+/* 3. Right Column: Socials */
+.social-col {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between words */
+  color: #ffffff;
+  font-size: 15px;
+}
+
+.social-links a {
+  color: #a0a0a0;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.social-links a:hover {
+  color: #ff6b35;
+}
+
+/* Bottom Copyright Section */
+.footer-bottom {
+  border-top: 1px solid #2a2a2a; /* Subtle divider line */
+  padding: 30px 20px;
+  text-align: center; /* Centers the text as seen in your image */
+  color: #666666;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .footer-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px 40px 20px;
+  }
+  
+  .footer-col {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .social-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

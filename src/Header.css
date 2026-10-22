@@ -1,0 +1,123 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(13, 9, 8, 0.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 24px rgba(255, 90, 31, 0.12);
+}
+
+/* fire line along the bottom edge */
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--fire-red), var(--accent), var(--fire-red));
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-header a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* logo with fire gradient */
+.site-header .brand {
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  background: linear-gradient(135deg, #ffb347, var(--accent) 45%, var(--fire-red));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: filter 0.2s;
+}
+
+.site-header .brand:hover { filter: brightness(1.15); }
+
+/* nav links with animated underline */
+.nav { display: flex; gap: 2rem; }
+
+.nav a {
+  position: relative;
+  padding: 0.25rem 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  transition: color 0.2s;
+}
+
+.nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--fire-red));
+  transition: width 0.25s;
+}
+
+.nav a:hover { color: #fff; }
+.nav a:hover::after { width: 100%; }
+
+/* bag button */
+.site-header .bag {
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.site-header .bag:hover {
+  background: linear-gradient(135deg, var(--accent), var(--fire-red));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(255, 90, 31, 0.45);
+}
+
+/* mobile menu button (hidden on desktop) */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .menu-toggle { display: block; }
+
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav a { padding: 1rem 1.5rem; border-top: 1px solid var(--line); }
+  .nav a::after { display: none; }
+  .nav.open { display: flex; }
+}

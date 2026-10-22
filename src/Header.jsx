@@ -1,4 +1,4 @@
-import './Header.css'
+import "./Header.css";
 
 export default function Header() {
   return (
@@ -16,5 +16,5 @@ export default function Header() {
         <a href="#" className="bag">Bag</a>
       </div>
     </header>
-  )
+  );
 }
