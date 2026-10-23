@@ -98,3 +98,35 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.product-card img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  transition: transform 0.3s;
+}
+
+.product-card:hover img { transform: translateY(-4px); }
+
+.product-card h3 {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.product-card .price {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.product-card small {
+  color: var(--muted);
+  text-transform: capitalize;
+}
