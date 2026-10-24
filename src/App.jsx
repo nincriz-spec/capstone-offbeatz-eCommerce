@@ -1,6 +1,6 @@
-import { Routes, Route } from "react-router-dom";
+import { Route, Switch } from "wouter";
 import Header from "./Header";
-import SiteFooter from "./Footer";
+import Footer from "./Footer";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import "./App.css";
@@ -10,12 +10,15 @@ function App() {
         <>
             <Header />
 
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-            </Routes>
+            <Switch>
+                <Route path="/" component={Home} />
+                <Route path="/shop" component={Shop} />
+                <Route path="/product/:id"><ProductDetail /></Route>
+            </Switch>
 
-            <SiteFooter />
+
+
+            <Footer />
         </>
     );
 }
