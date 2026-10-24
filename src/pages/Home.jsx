@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import Hero from "../Hero";
 
 const categories = [

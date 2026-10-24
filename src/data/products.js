@@ -5,7 +5,7 @@ export const products = [
     price: 25,
     fit: "oversized",
     Category: { name: "Shirts", slug: "shirts" },
-    images: [{ url: "/products/tee.jpg" }],
+    images: [{ url: "/products/OBsignature.jpg" }],
     variants: [
       { id: 1, size: "L", color: "Black", stockQty: 10 },
       { id: 2, size: "M", color: "Black", stockQty: 5 },
@@ -21,7 +21,7 @@ export const products = [
     price: 25,
     fit: "oversized",
     Category: { name: "Shirts", slug: "shirts" },
-    images: [{ url: "/products/tee2.jpg" }],
+    images: [{ url: "/products/dontbestupidtee.jpg" }],
     variants: [
       { id: 7, size: "L", color: "White", stockQty: 10 },
       { id: 8, size: "M", color: "White", stockQty: 5 },
@@ -67,7 +67,7 @@ export const products = [
     price: 22,
     fit: "regular",
     Category: { name: "Customized Uniforms", slug: "uniforms" },
-    images: [{ url: "/categories/argentina.jpg" }],
+    images: [{ url: "/products/sportsuniform.jpg" }],
     options: [{ name: "Set", values: ["Top Only", "Top + Shorts"] }],
     variants: [
       { id: 18, size: "M", color: "Red", set: "Top Only", price: 22, stockQty: 20 },
