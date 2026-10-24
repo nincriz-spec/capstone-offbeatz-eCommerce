@@ -130,3 +130,8 @@
   color: var(--muted);
   text-transform: capitalize;
 }
+a.product-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
