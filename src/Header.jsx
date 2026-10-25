@@ -1,20 +1,23 @@
 import { Link } from "wouter";
+import { useCart } from "./CartContext";
 import "./Header.css";
 
 export default function Header() {
+  const { cart } = useCart();
+
   return (
     <header className="site-header">
       <div className="container header-inner">
-       <Link to="/" className="brand">OFFBEATZ</Link>
+        <Link href="/" className="brand">OFFBEATZ</Link>
 
         <nav className="nav">
-          <Link to="/shop">Shop</Link>
-          <Link to="#drop">Drop</Link>
-          <Link to="#story">Story</Link>
-          <Link to="#contact">Contact</Link>
+          <Link href="/shop">Shop</Link>
+          <a href="#drop">Drop</a>
+          <a href="#story">Story</a>
+          <a href="#contact">Contact</a>
         </nav>
 
-        <a href="#" className="bag">Bag</a>
+       <Link href="/cart" className="bag">Bag ({cart.length})</Link>
       </div>
     </header>
   );

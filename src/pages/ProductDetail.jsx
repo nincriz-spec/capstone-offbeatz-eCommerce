@@ -1,6 +1,7 @@
 import { useParams, Link } from "wouter";
 import { products } from "../data/products";
 import { useState } from "react";
+import { useCart } from "../CartContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -11,6 +12,7 @@ export default function ProductDetail() {
   const sizes = [...new Set(variants.map((v) => v.size))];
   const [color, setColor] = useState(colors[0]);
   const [size, setSize] = useState(sizes[0]);
+  const { addToCart } = useCart();
 
   if (!product) {
     return (
@@ -32,6 +34,19 @@ export default function ProductDetail() {
     stockMessage = "Sold out";
   } else {
     stockMessage = `${selected.stockQty} in stock`;
+  }
+
+  const canAdd = selected && selected.stockQty > 0;
+
+  function handleAdd() {
+    addToCart({
+      variantId: selected.id,
+      name: product.name,
+      price: product.price,
+      color: selected.color,
+      size: selected.size,
+      image: product.images[0].url,
+    });
   }
 
   return (
@@ -74,6 +89,10 @@ export default function ProductDetail() {
           </div>
 
           <p className="stock">{stockMessage}</p>
+
+          <button className="btn" disabled={!canAdd} onClick={handleAdd}>
+            Add to bag
+          </button>
         </div>
       </div>
     </section>
