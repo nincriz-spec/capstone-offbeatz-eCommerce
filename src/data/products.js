@@ -71,8 +71,8 @@ export const products = [
     options: [{ name: "Set", values: ["Top Only", "Top + Shorts"] }],
     variants: [
       { id: 18, size: "M", color: "Red", set: "Top Only", price: 22, stockQty: 20 },
-      { id: 19, size: "M", color: "Red", set: "Top + Shorts", price: 35, stockQty: 20 },
-      { id: 20, size: "L", color: "Red", set: "Top + Shorts", price: 35, stockQty: 12 },
+      { id: 19, size: "M", color: "White", set: "Top + Shorts", price: 35, stockQty: 20 },
+      { id: 20, size: "L", color: "Blue", set: "Top + Shorts", price: 35, stockQty: 12 },
     ],
   },
 ];

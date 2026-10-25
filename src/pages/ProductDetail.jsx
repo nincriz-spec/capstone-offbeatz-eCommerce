@@ -1,12 +1,71 @@
 import { useParams } from "wouter";
+import { products } from "../data/products";
+import { useState } from "react";
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const product = products.find((p) => p.id === Number(id));
+
+  const colors = [...new Set(product.variants.map((v) => v.color))];
+  const sizes = [...new Set(product.variants.map((v) => v.size))];
+  const [color, setColor] = useState(colors[0]);
+  const [size, setSize] = useState(sizes[0]);
+
+  const selected = product.variants.find(
+    (v) => v.color === color && v.size === size
+  );
+
+  let stockMessage;
+  if (!selected) {
+    stockMessage = "This combination is not available";
+  } else if (selected.stockQty === 0) {
+    stockMessage = "Sold out";
+  } else {
+    stockMessage = `${selected.stockQty} in stock`;
+  }
 
   return (
     <section className="page">
-      <h2>Product page</h2>
-      <p>You opened product number {id}</p>
+      <div className="detail-layout">
+        <img
+          src={product.images[0].url}
+          alt={product.name}
+          className="detail-image"
+        />
+
+        <div className="detail-info">
+          <h2>{product.name}</h2>
+          <p className="price">${product.price}</p>
+
+          <h4>Color</h4>
+          <div className="option-row">
+            {colors.map((c) => (
+              <button
+                key={c}
+                className={c === color ? "option-pill active" : "option-pill"}
+                onClick={() => setColor(c)}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+
+          <h4>Size</h4>
+          <div className="option-row">
+            {sizes.map((s) => (
+              <button
+                key={s}
+                className={s === size ? "option-pill active" : "option-pill"}
+                onClick={() => setSize(s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+
+          <p className="stock">{stockMessage}</p>
+        </div>
+      </div>
     </section>
   );
 }
