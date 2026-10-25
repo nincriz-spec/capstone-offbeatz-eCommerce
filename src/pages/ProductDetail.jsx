@@ -22,6 +22,8 @@ export default function ProductDetail() {
       </section>
     );
   }
+  const image =
+    product.images.find((img) => img.color === color) || product.images[0];
 
   const selected = variants.find(
     (v) => v.color === color && v.size === size
@@ -45,7 +47,7 @@ export default function ProductDetail() {
       price: product.price,
       color: selected.color,
       size: selected.size,
-      image: product.images[0].url,
+      image: image.url,
     });
   }
 
@@ -53,7 +55,7 @@ export default function ProductDetail() {
     <section className="page">
       <div className="detail-layout">
         <img
-          src={product.images[0].url}
+          src={image.url}
           alt={product.name}
           className="detail-image"
         />
