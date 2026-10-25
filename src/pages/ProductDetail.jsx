@@ -1,4 +1,4 @@
-import { useParams } from "wouter";
+import { useParams, Link } from "wouter";
 import { products } from "../data/products";
 import { useState } from "react";
 
@@ -6,12 +6,22 @@ export default function ProductDetail() {
   const { id } = useParams();
   const product = products.find((p) => p.id === Number(id));
 
-  const colors = [...new Set(product.variants.map((v) => v.color))];
-  const sizes = [...new Set(product.variants.map((v) => v.size))];
+  const variants = product ? product.variants : [];
+  const colors = [...new Set(variants.map((v) => v.color))];
+  const sizes = [...new Set(variants.map((v) => v.size))];
   const [color, setColor] = useState(colors[0]);
   const [size, setSize] = useState(sizes[0]);
 
-  const selected = product.variants.find(
+  if (!product) {
+    return (
+      <section className="page">
+        <h2>Product not found</h2>
+        <Link href="/shop" className="btn">Back to shop</Link>
+      </section>
+    );
+  }
+
+  const selected = variants.find(
     (v) => v.color === color && v.size === size
   );
 
