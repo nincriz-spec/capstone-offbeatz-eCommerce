@@ -1,9 +1,14 @@
 import { Link } from "wouter";
-import { useCart } from "./CartContext";
+import { useCart } from "./ShopCart";
 import "./Header.css";
 
 export default function Header() {
   const { cart } = useCart();
+
+  let count = 0;
+  for (const item of cart) {
+    count += item.quantity;
+  }
 
   return (
     <header className="site-header">
@@ -17,7 +22,7 @@ export default function Header() {
           <a href="#contact">Contact</a>
         </nav>
 
-       <Link href="/cart" className="bag">Bag ({cart.length})</Link>
+        <Link href="/cart" className="bag">Bag ({count})</Link>
       </div>
     </header>
   );

@@ -1,7 +1,7 @@
 import { useParams, Link } from "wouter";
-import { products } from "../data/products";
 import { useState } from "react";
-import { useCart } from "../CartContext";
+import { products } from "../data/products";
+import { useCart } from "../ShopCart";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -22,6 +22,7 @@ export default function ProductDetail() {
       </section>
     );
   }
+
   const image =
     product.images.find((img) => img.color === color) || product.images[0];
 
@@ -54,11 +55,7 @@ export default function ProductDetail() {
   return (
     <section className="page">
       <div className="detail-layout">
-        <img
-          src={image.url}
-          alt={product.name}
-          className="detail-image"
-        />
+        <img src={image.url} alt={product.name} className="detail-image" />
 
         <div className="detail-info">
           <h2>{product.name}</h2>

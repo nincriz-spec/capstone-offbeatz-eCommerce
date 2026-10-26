@@ -1,8 +1,8 @@
 import { Link } from "wouter";
-import { useCart } from "../CartContext";
+import { useCart } from "../ShopCart";
 
 export default function Cart() {
-  const { cart } = useCart();
+  const { cart, removeFromCart, getCartTotal } = useCart();
 
   if (cart.length === 0) {
     return (
@@ -14,29 +14,33 @@ export default function Cart() {
     );
   }
 
-  let total = 0;
-  for (const item of cart) {
-    total += item.price;
-  }
-
   return (
     <section className="page">
       <h2>Your bag</h2>
 
       <div className="cart-list">
-        {cart.map((item, index) => (
-          <div className="cart-item" key={index}>
+        {cart.map((item) => (
+          <div className="cart-item" key={item.variantId}>
             <img src={item.image} alt={item.name} />
             <div>
               <h3>{item.name}</h3>
               <p>{item.color} / {item.size}</p>
+              <p>Quantity: {item.quantity}</p>
             </div>
-            <p className="price">${item.price}</p>
+            <div className="cart-right">
+              <p className="price">${item.price * item.quantity}</p>
+              <button
+                className="remove-btn"
+                onClick={() => removeFromCart(item.variantId)}
+              >
+                Remove
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
-      <p className="cart-total">Total: ${total}</p>
+      <p className="cart-total">Total: ${getCartTotal()}</p>
     </section>
   );
 }
