@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useCart } from "../ShopCart";
 
 export default function Cart() {
-  const { cart, removeFromCart, getCartTotal } = useCart();
+  const { cart, removeFromCart, modifyQuantity, getCartTotal } = useCart();
 
   if (cart.length === 0) {
     return (
@@ -22,11 +22,17 @@ export default function Cart() {
         {cart.map((item) => (
           <div className="cart-item" key={item.variantId}>
             <img src={item.image} alt={item.name} />
+
             <div>
               <h3>{item.name}</h3>
               <p>{item.color} / {item.size}</p>
-              <p>Quantity: {item.quantity}</p>
+              <div className="qty">
+                <button onClick={() => modifyQuantity(item.variantId, item.quantity - 1)}>−</button>
+                <span>{item.quantity}</span>
+                <button onClick={() => modifyQuantity(item.variantId, item.quantity + 1)}>+</button>
+              </div>
             </div>
+
             <div className="cart-right">
               <p className="price">${item.price * item.quantity}</p>
               <button

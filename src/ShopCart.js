@@ -27,6 +27,11 @@ export function useCart() {
     }
     return total;
   }
-
-  return { cart, addToCart, removeFromCart, getCartTotal };
+function modifyQuantity(variantId, newQuantity) {
+  if (newQuantity < 1) return;
+  const index = cart.findIndex((i) => i.variantId === variantId);
+  const updated = { ...cart[index], quantity: newQuantity };
+  setCart(cart.with(index, updated));
+}
+  return { cart, addToCart, removeFromCart, modifyQuantity, getCartTotal };
 }
