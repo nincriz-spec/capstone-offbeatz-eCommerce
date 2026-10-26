@@ -47,6 +47,7 @@ export default function Cart() {
       </div>
 
       <p className="cart-total">Total: ${getCartTotal()}</p>
+      <Link href="/checkout" className="btn">Proceed to checkout</Link>
     </section>
   );
 }
