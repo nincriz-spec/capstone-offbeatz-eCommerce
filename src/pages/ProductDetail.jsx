@@ -2,6 +2,7 @@ import { useParams, Link } from "wouter";
 import { useState } from "react";
 import { products } from "../data/products";
 import { useCart } from "../ShopCart";
+import { useFlash } from "../FlashStore";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -13,6 +14,7 @@ export default function ProductDetail() {
   const [color, setColor] = useState(colors[0]);
   const [size, setSize] = useState(sizes[0]);
   const { addToCart } = useCart();
+  const { showFlash } = useFlash();
 
   if (!product) {
     return (
@@ -50,6 +52,7 @@ export default function ProductDetail() {
       size: selected.size,
       image: image.url,
     });
+      showFlash("Added to bag");
   }
 
   return (

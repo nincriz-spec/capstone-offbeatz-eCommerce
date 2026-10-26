@@ -8,6 +8,7 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Checkout from "./pages/Checkout";
+import FlashMessage from "./FlashMessage";
 import "./App.css";
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
                 <Route path="/checkout"><Checkout /></Route>
             </Switch>
 
-
+            <FlashMessage />
 
             <Footer />
         </>

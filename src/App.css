@@ -332,3 +332,56 @@ button.btn:disabled {
 @media (max-width: 800px) {
   .checkout-layout { grid-template-columns: 1fr; }
 }
+@media (max-width: 1000px) {
+  .category-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .page { padding: 3rem 1rem 5rem; }
+  .category-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+}
+html { scroll-behavior: smooth; }
+
+#drop, #story, #contact { scroll-margin-top: 90px; }
+
+#drop, #story { padding-bottom: 2rem; }
+#contact { padding-bottom: 6rem; }
+
+.about-text { max-width: 640px; color: var(--muted); }
+
+.flash {
+  position: fixed;
+  top: 90px;
+  right: 1rem;
+  z-index: 200;
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.flash-success { background: var(--accent); color: #fff; }
+.flash-error { background: #c0392b; color: #fff; }
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+
+.filter-pill {
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.filter-pill:hover { border-color: var(--accent); }
+
+.filter-pill.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
