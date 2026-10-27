@@ -34,7 +34,7 @@ export default function ProductDetail() {
 
   let stockMessage;
   if (!selected) {
-    stockMessage = "This combination is not available";
+    stockMessage = "stock unavailable";
   } else if (selected.stockQty === 0) {
     stockMessage = "Sold out";
   } else {

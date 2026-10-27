@@ -28,8 +28,8 @@ export default function Checkout() {
   if (placed) {
     return (
       <section className="page">
-        <h2>Thank you!</h2>
-        <p>Your order details were received.</p>
+        <h2>Thank you for shopping</h2>
+        <p>Your purchased is confirmed.</p>
         <Link href="/shop" className="btn">Back to shop</Link>
       </section>
     );

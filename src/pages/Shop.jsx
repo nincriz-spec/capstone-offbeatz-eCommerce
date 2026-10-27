@@ -41,7 +41,7 @@ export default function Shop() {
         ))}
       </div>
 
-      {visible.length === 0 && <p>No products in this category yet.</p>}
+      {visible.length === 0 && <p>Upcoming soon.</p>}
     </section>
   );
 }
