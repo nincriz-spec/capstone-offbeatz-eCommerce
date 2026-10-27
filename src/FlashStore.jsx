@@ -1,14 +1,36 @@
-import { atom, useAtom } from "jotai";
 
-const flashAtom = atom(null);
+import { atom, useAtom } from 'jotai';
 
-export function useFlash() {
-  const [flash, setFlash] = useAtom(flashAtom);
+const flashStoreAtom = atom({
+    message: '',
+    type: 'info'
+})
 
-  function showFlash(message, type = "success") {
-    setFlash({ message, type });
-    setTimeout(() => setFlash(null), 3000);
-  }
+export const useFlash = () => {
 
-  return { flash, showFlash };
+    const [flashMessage, setFlashStore] = useAtom(flashStoreAtom);
+
+    const showMessage = (message, type="info" ) => {
+        setTimeout(()=>{
+            clearMessage();
+        }, 6000);
+
+        setFlashStore({
+            message, type
+        })
+    }
+
+    const clearMessage = () => {
+        setFlashStore({
+            message: '',
+            type: 'info'
+        })
+    }
+
+    return {
+        showMessage,
+        flashMessage,
+        clearMessage
+    }
 }
+

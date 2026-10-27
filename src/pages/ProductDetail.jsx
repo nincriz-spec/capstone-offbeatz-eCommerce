@@ -14,7 +14,7 @@ export default function ProductDetail() {
   const [color, setColor] = useState(colors[0]);
   const [size, setSize] = useState(sizes[0]);
   const { addToCart } = useCart();
-  const { showFlash } = useFlash();
+  const { showMessage} = useFlash();
 
   if (!product) {
     return (
@@ -52,7 +52,7 @@ export default function ProductDetail() {
       size: selected.size,
       image: image.url,
     });
-      showFlash("Added to bag");
+      showMessage("Added to bag", "success");
   }
 
   return (

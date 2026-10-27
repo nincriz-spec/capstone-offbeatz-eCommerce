@@ -354,34 +354,24 @@ html { scroll-behavior: smooth; }
   top: 90px;
   right: 1rem;
   z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding: 0.8rem 1.2rem;
   border-radius: var(--radius);
   font-weight: 600;
+  color: #fff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-.flash-success { background: var(--accent); color: #fff; }
-.flash-error { background: #c0392b; color: #fff; }
-
-.filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: 2rem;
+.flash button {
+  background: none;
+  border: 0;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
-.filter-pill {
-  padding: 0.5rem 1.1rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  font-size: 0.85rem;
-  color: var(--text);
-  text-decoration: none;
-}
-
-.filter-pill:hover { border-color: var(--accent); }
-
-.filter-pill.active {
-  border-color: var(--accent);
-  color: var(--accent);
-}
+.flash-info { background: #3a3a40; }
+.flash-success { background: var(--accent); }
+.flash-error { background: #c0392b; }

@@ -1,9 +1,14 @@
 import { useFlash } from "./FlashStore";
 
 export default function FlashMessage() {
-  const { flash } = useFlash();
+  const { flashMessage, clearMessage } = useFlash();
 
-  if (!flash) return null;
+  if (!flashMessage.message) return null;
 
-  return <div className={`flash flash-${flash.type}`}>{flash.message}</div>;
+  return (
+    <div className={`flash flash-${flashMessage.type}`}>
+      <span>{flashMessage.message}</span>
+      <button onClick={clearMessage}>×</button>
+    </div>
+  );
 }
