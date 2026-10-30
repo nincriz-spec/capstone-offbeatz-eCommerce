@@ -1,52 +1,48 @@
-import { useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { Link } from "wouter";
 
+const validationSchema = Yup.object({
+  email: Yup.string().email("Enter a valid email").required("Email is required"),
+  password: Yup.string().required("Password is required"),
+});
+
+const initialValues = { email: "", password: "" };
+
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    if (!email || !password) {
-      setError("Please enter your email and password.");
-      return;
-    }
-
-    setError("");
-    console.log("Login attempt for:", email);
+  async function handleSubmit(values) {
+    console.log("Login attempt for:", values.email);
   }
 
   return (
     <section className="page">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <h2>Log in</h2>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {(formik) => (
+          <Form className="auth-form">
+            <h2>Log in</h2>
 
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+            <label htmlFor="email">Email</label>
+            <Field type="email" id="email" name="email" />
+            <ErrorMessage name="email" component="p" className="form-error" />
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+            <label htmlFor="password">Password</label>
+            <Field type="password" id="password" name="password" />
+            <ErrorMessage name="password" component="p" className="form-error" />
 
-        {error && <p className="form-error">{error}</p>}
+            <button className="btn" type="submit" disabled={formik.isSubmitting}>
+              Log in
+            </button>
 
-        <button className="btn" type="submit">Log in</button>
-
-        <p className="form-note">
-          New here? <Link href="/register">Create an account</Link>
-        </p>
-      </form>
+            <p className="form-note">
+              New here? <Link href="/register">Create an account</Link>
+            </p>
+          </Form>
+        )}
+      </Formik>
     </section>
   );
 }
