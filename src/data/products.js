@@ -25,6 +25,7 @@ export const products = [
     images: [{  color: "Black",url: "/products/dontbestupid-tee-black.jpg" },
     {  color: "White",url: "/products/dontbestupid-tee-white.jpg" },
     {  color: "Cream",url: "/products/dontbestupid-tee-cream.jpg" }],
+    
     variants: [
       { id: 7, size: "L", color: "White", stockQty: 10 },
       { id: 8, size: "M", color: "White", stockQty: 5 },
