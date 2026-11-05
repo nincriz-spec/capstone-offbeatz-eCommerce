@@ -211,18 +211,3 @@ create table order_status_history(
     on delete set null
     on update restrict
 ) engine = innodb;
-
-
-create table refresh_token(
-    token_id  int unsigned not null auto_increment primary key,
-    token_hash  char(64) not null unique,
-    expires_at  datetime not null,
-    revoked  tinyint(1) not null default 0,   -- set to 1 on logout
-    created_at  datetime not null default current_timestamp,
-    customer_id  int unsigned not null,
-
-    constraint fk_token_customer
-    foreign key (customer_id) references customer(customer_id)
-    on delete cascade
-    on update restrict
-) engine = innodb;

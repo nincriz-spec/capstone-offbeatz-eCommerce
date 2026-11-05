@@ -28,7 +28,7 @@ async function loginUser(email, password) {
     const token = jwt.sign(
         { customerId: user.customer_id, role: user.role },
         process.env.JWT_SECRET,
-        { expiresIn: '15m' }
+        { expiresIn: '1hr' }
     );
 
     const refreshToken = jwt.sign(
