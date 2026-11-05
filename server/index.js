@@ -16,7 +16,12 @@ app.get('/', (req, res) => {
 });
 
 const productsRouter = require('./routes/products');
+const usersRouter = require('./routes/users');
 app.use('/api/products', productsRouter);
+app.use('/api/users', usersRouter);
+
+const ordersRouter = require('./routes/orders');
+app.use('/api/orders', ordersRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
