@@ -1,20 +1,25 @@
 import { useParams, Link } from "wouter";
 import { useState } from "react";
-import { products } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
 import { useCart } from "../ShopCart";
 import { useFlash } from "../FlashStore";
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const { products, loading } = useProducts();
   const product = products.find((p) => p.id === Number(id));
 
   const variants = product ? product.variants : [];
   const colors = [...new Set(variants.map((v) => v.color))];
   const sizes = [...new Set(variants.map((v) => v.size))];
-  const [color, setColor] = useState(colors[0]);
-  const [size, setSize] = useState(sizes[0]);
+  const [pickedColor, setPickedColor] = useState(null);
+  const [pickedSize, setPickedSize] = useState(null);
+  const color = pickedColor || colors[0];
+  const size = pickedSize || sizes[0];
   const { addToCart } = useCart();
-  const { showMessage} = useFlash();
+  const { showMessage } = useFlash();
+
+  if (loading) return <p>Loading...</p>;
 
   if (!product) {
     return (
@@ -70,7 +75,7 @@ export default function ProductDetail() {
               <button
                 key={c}
                 className={c === color ? "option-pill active" : "option-pill"}
-                onClick={() => setColor(c)}
+                onClick={() => setPickedColor(c)}
               >
                 {c}
               </button>
@@ -83,7 +88,7 @@ export default function ProductDetail() {
               <button
                 key={s}
                 className={s === size ? "option-pill active" : "option-pill"}
-                onClick={() => setSize(s)}
+                onClick={() => setPickedSize(s)}
               >
                 {s}
               </button>

@@ -34,7 +34,7 @@ async function loginUser(email, password) {
     const refreshToken = jwt.sign(
         { customerId: user.customer_id },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '1hr' }
     );
 
     return { token, refreshToken };

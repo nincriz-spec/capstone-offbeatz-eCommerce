@@ -3,21 +3,24 @@ const pool = require('../database');
 async function getAllProducts() {
     const [rows] = await pool.execute(
         `SELECT
-        product_id,
-        name,
-        CAST(price AS DOUBLE) AS price,
-        description,
-        fit,
-        fabric,
-        gsm,
-        gender,
-        drop_name,
-        care_instructions,
-        is_active,
-        created_at
-        FROM product
+        p.product_id,
+        p.name,
+        CAST(p.price AS DOUBLE) AS price,
+        p.description,
+        p.fit,
+        p.fabric,
+        p.gsm,
+        p.gender,
+        p.drop_name,
+        p.care_instructions,
+        p.is_active,
+        p.created_at,
+        c.name AS category_name,
+        c.slug AS category_slug
+        FROM product p
+        JOIN category c ON p.category_id = c.category_id
         `
-    )
+    );
     return rows;
 }
 
@@ -33,26 +36,22 @@ async function getAllVariant() {
         product_id
         FROM variant
         `
-    )
-
+    );
     return rows;
 }
 
 async function getAllProductImage() {
     const [rows] = await pool.execute(
-        `SELECT  
-       product_image_id,
-       product_id,
-       url,
-       color
-       FROM product_image
-       ORDER BY sort_order
-       `
-    )
+        `SELECT
+        product_image_id,
+        product_id,
+        url,
+        color
+        FROM product_image
+        ORDER BY sort_order
+        `
+    );
     return rows;
-
-
 }
-
 
 module.exports = { getAllProducts, getAllVariant, getAllProductImage };

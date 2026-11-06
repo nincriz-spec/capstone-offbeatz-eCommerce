@@ -7,7 +7,15 @@ async function getAllProducts() {
 
     const result = products.map((p) => ({
         ...p,
-        variants: variants.filter((v) => v.product_id === p.product_id),
+        id: p.product_id,
+        Category: { name: p.category_name, slug: p.category_slug },
+        variants: variants
+            .filter((v) => v.product_id === p.product_id)
+            .map((v) => ({
+                ...v,
+                id: v.variant_id,
+                set: v.set_name
+            })),
         images: images.filter((i) => i.product_id === p.product_id),
     }));
 

@@ -375,3 +375,33 @@ html { scroll-behavior: smooth; }
 .flash-info { background: #3a3a40; }
 .flash-success { background: var(--accent); }
 .flash-error { background: #c0392b; }
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0 28px;
+}
+
+.filter-pill {
+  padding: 8px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.filter-pill:hover {
+  border-color: #f26a21;
+  color: #f26a21;
+}
+
+.filter-pill.active {
+  background: #f26a21;
+  border-color: #f26a21;
+  color: #fff;
+}

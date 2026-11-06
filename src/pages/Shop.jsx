@@ -1,6 +1,6 @@
 import { Link, useSearch } from "wouter";
 import ProductCard from "../ProductCard";
-import { products } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
 
 const categories = [
   { name: "All", slug: "" },
@@ -12,12 +12,14 @@ const categories = [
 ];
 
 export default function Shop() {
+    const { products, loading } = useProducts();
   const search = useSearch();
   const category = new URLSearchParams(search).get("category") || "";
 
   const visible = category
     ? products.filter((p) => p.Category.slug === category)
     : products;
+      if (loading) return <p>Loading...</p>;
 
   return (
     <section className="page">

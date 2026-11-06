@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import Hero from "../Hero";
 import ProductCard from "../ProductCard";
-import { products } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
 
 const categories = [
   { name: "Shirts", slug: "shirts", image: "/categories/OB Tee 1.jpg" },
@@ -12,6 +12,7 @@ const categories = [
 ];
 
 export default function Home() {
+    const { products } = useProducts();
   return (
     <>
       <Hero />
