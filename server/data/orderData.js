@@ -1,13 +1,5 @@
 const pool = require('../database');
 
-async function getAddressByCustomer(customerId) {
-    const [rows] = await pool.execute(
-        'SELECT address_id FROM address WHERE customer_id = ? LIMIT 1',
-        [customerId]
-    );
-    return rows[0] || null;
-}
-
 async function getVariantById(variantId) {
     const [rows] = await pool.execute(
         `SELECT v.variant_id, v.sku, v.color, v.set_name, v.product_id, v.stock_qty,
@@ -20,11 +12,17 @@ async function getVariantById(variantId) {
     return rows[0] || null;
 }
 
-async function createOrder(customerId, addressId, total, lines) {
+async function createOrder(customerId, address, total, lines) {
     const connection = await pool.getConnection();
 
     try {
         await connection.beginTransaction();
+
+        const [addressResult] = await connection.execute(
+            'INSERT INTO address (customer_id, street, block, city, postal_code) VALUES (?, ?, ?, ?, ?)',
+            [customerId, address.street, address.block, address.city, address.postalCode]
+        );
+        const addressId = addressResult.insertId;
 
         const [orderResult] = await connection.execute(
             'INSERT INTO orders (customer_id, address_id, total) VALUES (?, ?, ?)',
@@ -58,4 +56,4 @@ async function createOrder(customerId, addressId, total, lines) {
     }
 }
 
-module.exports = { getAddressByCustomer, getVariantById, createOrder };
+module.exports = { getVariantById, createOrder };

@@ -1,13 +1,12 @@
 const orderData = require('../data/orderData');
 
-async function createOrder(customerId, items) {
+async function createOrder(customerId, items, address) {
     if (!items || items.length === 0) {
         throw new Error('Cart is empty');
     }
 
-    const address = await orderData.getAddressByCustomer(customerId);
-    if (!address) {
-        throw new Error('Please add an address first');
+    if (!address || !address.street || !address.block || !address.city || !address.postalCode) {
+        throw new Error('Please enter a full address');
     }
 
     let total = 0;
@@ -29,9 +28,8 @@ async function createOrder(customerId, items) {
         });
     }
 
-    const orderId = await orderData.createOrder(customerId, address.address_id, total, lines);
+    const orderId = await orderData.createOrder(customerId, address, total, lines);
     return { orderId, total };
 }
-
 
 module.exports = { createOrder };

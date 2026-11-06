@@ -12,6 +12,7 @@ export default function Checkout() {
   const [postalCode, setPostalCode] = useState("");
   const [error, setError] = useState("");
   const [placed, setPlaced] = useState(false);
+  const [sending, setSending] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -28,16 +29,19 @@ export default function Checkout() {
     }
 
     setError("");
+    setSending(true);
 
     const items = cart.map((item) => ({
       variantId: item.variantId,
       quantity: item.quantity,
     }));
 
+    const address = { street, block, city, postalCode };
+
     try {
       await axios.post(
         "/api/orders",
-        { items },
+        { items, address },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       clearCart();
@@ -48,6 +52,8 @@ export default function Checkout() {
           err.response?.data?.message ||
           "Could not place the order."
       );
+    } finally {
+      setSending(false);
     }
   }
 
@@ -93,7 +99,9 @@ export default function Checkout() {
 
           {error && <p className="form-error">{error}</p>}
 
-          <button className="btn" type="submit">Place order</button>
+          <button className="btn" type="submit" disabled={sending}>
+            {sending ? "Placing order..." : "Place order"}
+          </button>
         </form>
 
         <div className="order-summary">
