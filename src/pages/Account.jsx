@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import axios from "axios";
 import { useAuth } from "../AuthStore";
+import ProfileTab from "../ProfileTab";
+import AddressesTab from "../AddressesTab";
 
 const orderTabs = [
   { key: "all", label: "All", statuses: [] },
@@ -17,6 +19,7 @@ export default function Account() {
   const [orderTab, setOrderTab] = useState("all");
   const [profile, setProfile] = useState(null);
   const [orders, setOrders] = useState([]);
+  const [addresses, setAddresses] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -32,6 +35,11 @@ export default function Account() {
       .get("/api/orders", { headers })
       .then((res) => setOrders(res.data))
       .catch(() => setError("Could not load your orders. Please log in again."));
+
+    axios
+      .get("/api/users/addresses", { headers })
+      .then((res) => setAddresses(res.data))
+      .catch(() => setError("Could not load your addresses. Please log in again."));
   }, [isLoggedIn, token]);
 
   if (!isLoggedIn) {
@@ -79,16 +87,7 @@ export default function Account() {
           {error && <p className="form-error">{error}</p>}
 
           {tab === "profile" && (
-            <div>
-              <h3>Profile details</h3>
-              {profile && (
-                <>
-                  <div className="profile-row"><span>Name</span><span>{profile.name}</span></div>
-                  <div className="profile-row"><span>Email</span><span>{profile.email}</span></div>
-                  <div className="profile-row"><span>Phone</span><span>{profile.phone}</span></div>
-                </>
-              )}
-            </div>
+            <ProfileTab profile={profile} token={token} onSaved={setProfile} />
           )}
 
           {tab === "orders" && (
@@ -132,7 +131,9 @@ export default function Account() {
             </div>
           )}
 
-          {tab === "addresses" && <p>Your addresses will show here soon.</p>}
+          {tab === "addresses" && (
+            <AddressesTab addresses={addresses} token={token} onChanged={setAddresses} />
+          )}
         </div>
       </div>
     </section>

@@ -26,6 +26,7 @@ function App() {
                 <Route path="/register"><Register /></Route>
                 <Route path="/checkout"><Checkout /></Route>
                 <Route path="/account"><Account /></Route>
+                
             </Switch>
 
             <FlashMessage />

@@ -28,16 +28,66 @@ async function loginUser(email, password) {
     const token = jwt.sign(
         { customerId: user.customer_id, role: user.role },
         process.env.JWT_SECRET,
-        { expiresIn: '1hr' }
+        { expiresIn: '8h' }
     );
 
     const refreshToken = jwt.sign(
         { customerId: user.customer_id },
         process.env.JWT_SECRET,
-        { expiresIn: '1hr' }
+        { expiresIn: '1h' }
     );
 
     return { token, refreshToken };
 }
 
-module.exports = { registerUser, loginUser };
+async function getProfile(customerId) {
+    const user = await userData.getUserById(customerId);
+    if (!user) {
+        throw new Error('User not found');
+    }
+    return { name: user.name, email: user.email, phone: user.phone };
+}
+
+async function getAddresses(customerId) {
+    return userData.getAddressesByCustomer(customerId);
+}
+async function updateProfile(customerId, name, phone) {
+    if (!name || !name.trim()) {
+        throw new Error('Name is required');
+    }
+    if (!/^[0-9+ ]{7,15}$/.test(phone || '')) {
+        throw new Error('Enter a valid phone number');
+    }
+    await userData.updateUser(customerId, name.trim(), phone);
+    return getProfile(customerId);
+}
+function checkAddress(a) {
+    if (!a || !a.street || !a.block || !a.city || !a.postal_code) {
+        throw new Error('Please fill in all address fields');
+    }
+}
+
+async function addAddress(customerId, a) {
+    checkAddress(a);
+    await userData.addAddress(customerId, a);
+    return getAddresses(customerId);
+}
+
+async function updateAddress(customerId, addressId, a) {
+    checkAddress(a);
+    await userData.updateAddress(addressId, customerId, a);
+    return getAddresses(customerId);
+}
+
+async function removeAddress(customerId, addressId) {
+    try {
+        await userData.deleteAddress(addressId, customerId);
+    } catch (err) {
+        if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+            throw new Error('This address is used by an order, so it cannot be removed');
+        }
+        throw err;
+    }
+    return getAddresses(customerId);
+}
+module.exports = { registerUser, loginUser, getProfile, getAddresses, updateProfile, addAddress, updateAddress, removeAddress };

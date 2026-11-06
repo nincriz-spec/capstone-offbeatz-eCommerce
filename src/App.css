@@ -485,3 +485,72 @@ html { scroll-behavior: smooth; }
   letter-spacing: 0.08em;
   color: #f26a21;
 }
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+/* ---------- My Account: compact, tidy buttons and cards ---------- */
+
+.account-content .btn {
+  padding: 7px 18px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  border-radius: 6px;
+}
+
+/* "Edit profile" and "Add address" sit a little away from the content above */
+.account-content > div > .btn {
+  margin-top: 14px;
+}
+
+/* the second button in a pair (Remove / Cancel) is an outline button */
+.account-content .form-actions .btn:last-child {
+  background: transparent;
+  border: 1px solid #555;
+  color: #ddd;
+}
+
+.account-content .form-actions .btn:last-child:hover {
+  border-color: #f26b21;
+  color: #fff;
+}
+
+/* smaller address cards */
+.account-content .order-card {
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  max-width: 480px;
+}
+
+.account-content .order-card p:not(.cart-total) {
+  margin: 2px 0;
+  font-size: 14px;
+  color: #ddd;
+}
+
+/* edit forms don't stretch across the whole page */
+.account-content .auth-form {
+  max-width: 380px;
+}
+
+/* profile rows */
+.account-content .profile-row {
+  max-width: 480px;
+}
+.account-content .profile-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #222;
+}
+
+.account-content .profile-row span:first-child {
+  color: #999;
+}
+
+.account-content .profile-row span:last-child {
+  color: #fff;
+  font-weight: 600;
+}
