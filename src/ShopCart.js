@@ -27,6 +27,7 @@ export function useCart() {
         }
         return total;
     }
+
     function modifyQuantity(variantId, newQuantity) {
         if (newQuantity < 1) {
             removeFromCart(variantId);
@@ -36,5 +37,10 @@ export function useCart() {
         const updated = { ...cart[index], quantity: newQuantity };
         setCart(cart.with(index, updated));
     }
-    return { cart, addToCart, removeFromCart, modifyQuantity, getCartTotal };
+
+    function clearCart() {
+        setCart([]);
+    }
+
+    return { cart, addToCart, removeFromCart, modifyQuantity, getCartTotal, clearCart };
 }

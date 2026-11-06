@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useCart } from "../ShopCart";
+import axios from "axios";
 
 export default function Checkout() {
-  const { cart, getCartTotal } = useCart();
+  const { cart, getCartTotal, clearCart } = useCart();
 
   const [street, setStreet] = useState("");
   const [block, setBlock] = useState("");
@@ -12,7 +13,7 @@ export default function Checkout() {
   const [error, setError] = useState("");
   const [placed, setPlaced] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (!street || !block || !city || !postalCode) {
@@ -20,9 +21,34 @@ export default function Checkout() {
       return;
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please log in before placing an order.");
+      return;
+    }
+
     setError("");
-    console.log("Order:", { street, block, city, postalCode, items: cart });
-    setPlaced(true);
+
+    const items = cart.map((item) => ({
+      variantId: item.variantId,
+      quantity: item.quantity,
+    }));
+
+    try {
+      await axios.post(
+        "/api/orders",
+        { items },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      clearCart();
+      setPlaced(true);
+    } catch (err) {
+      setError(
+        err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Could not place the order."
+      );
+    }
   }
 
   if (placed) {

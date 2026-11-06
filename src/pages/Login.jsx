@@ -1,6 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import axios from "axios";
+import { useFlash } from "../FlashStore";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Enter a valid email").required("Email is required"),
@@ -10,9 +12,21 @@ const validationSchema = Yup.object({
 const initialValues = { email: "", password: "" };
 
 export default function Login() {
+  const [, navigate] = useLocation();
+  const { showMessage } = useFlash();
+
   async function handleSubmit(values) {
-    console.log("Login attempt for:", values.email);
+    try {
+      const res = await axios.post("/api/users/login", values);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("refreshToken", res.data.refreshToken);
+      showMessage("Logged in", "success");
+      navigate("/");
+    } catch (err) {
+      showMessage("Invalid email or password", "error");
+    }
   }
+  
 
   return (
     <section className="page">
