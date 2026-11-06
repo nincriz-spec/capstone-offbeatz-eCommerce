@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "./ShopCart";
+import { useAuth } from "./AuthStore";
+import { useFlash } from "./FlashStore";
 import "./Header.css";
 
 export default function Header() {
   const { cart } = useCart();
+  const { isLoggedIn, logout } = useAuth();
+  const { showMessage } = useFlash();
   const [open, setOpen] = useState(false);
   const [location, navigate] = useLocation();
 
@@ -29,6 +33,13 @@ export default function Header() {
     }
   }
 
+  function handleLogout() {
+    logout();
+    setOpen(false);
+    showMessage("Logged out", "success");
+    navigate("/");
+  }
+
   return (
     <header className="site-header">
       <div className="container header-inner">
@@ -39,7 +50,15 @@ export default function Header() {
           <a href="/#drop" onClick={(e) => goToSection(e, "drop")}>Drop</a>
           <a href="/#story" onClick={(e) => goToSection(e, "story")}>Story</a>
           <a href="/#contact" onClick={(e) => goToSection(e, "contact")}>Contact</a>
-          <Link href="/login" onClick={() => setOpen(false)}>Log in</Link>
+
+          {isLoggedIn ? (
+            <>
+              <Link href="/account" onClick={() => setOpen(false)}>My account</Link>
+              <a href="/" onClick={(e) => { e.preventDefault(); handleLogout(); }}>Log out</a>
+            </>
+          ) : (
+            <Link href="/login" onClick={() => setOpen(false)}>Log in</Link>
+          )}
         </nav>
 
         <Link href="/cart" className="bag">Bag ({count})</Link>

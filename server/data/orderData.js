@@ -56,4 +56,35 @@ async function createOrder(customerId, address, total, lines) {
     }
 }
 
-module.exports = { getVariantById, createOrder };
+async function getOrdersByCustomer(customerId) {
+    const [rows] = await pool.execute(
+        `SELECT order_id, status, CAST(total AS DOUBLE) AS total, created_at
+         FROM orders
+         WHERE customer_id = ?
+         ORDER BY created_at DESC`,
+        [customerId]
+    );
+    return rows;
+}
+
+async function getOrderItemsByCustomer(customerId) {
+    const [rows] = await pool.execute(
+        `SELECT oi.order_id, oi.variant_id, oi.quantity,
+                CAST(oi.unit_price AS DOUBLE) AS unit_price,
+                p.name, v.size, v.color
+         FROM order_item oi
+         JOIN orders o ON oi.order_id = o.order_id
+         JOIN variant v ON oi.variant_id = v.variant_id
+         JOIN product p ON v.product_id = p.product_id
+         WHERE o.customer_id = ?`,
+        [customerId]
+    );
+    return rows;
+}
+
+module.exports = {
+    getVariantById,
+    createOrder,
+    getOrdersByCustomer,
+    getOrderItemsByCustomer
+};

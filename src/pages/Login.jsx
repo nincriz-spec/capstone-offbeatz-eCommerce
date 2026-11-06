@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { Link, useLocation } from "wouter";
 import axios from "axios";
 import { useFlash } from "../FlashStore";
+import { useAuth } from "../AuthStore";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Enter a valid email").required("Email is required"),
@@ -14,12 +15,12 @@ const initialValues = { email: "", password: "" };
 export default function Login() {
   const [, navigate] = useLocation();
   const { showMessage } = useFlash();
+    const { saveLogin } = useAuth();
 
   async function handleSubmit(values) {
     try {
       const res = await axios.post("/api/users/login", values);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("refreshToken", res.data.refreshToken);
+      saveLogin(res.data.token, res.data.refreshToken);
       showMessage("Logged in", "success");
       navigate("/");
     } catch (err) {

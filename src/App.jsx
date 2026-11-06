@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Checkout from "./pages/Checkout";
 import FlashMessage from "./FlashMessage";
+import Account from "./pages/Account";
 import "./App.css";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
                 <Route path="/login"><Login /></Route>
                 <Route path="/register"><Register /></Route>
                 <Route path="/checkout"><Checkout /></Route>
+                <Route path="/account"><Account /></Route>
             </Switch>
 
             <FlashMessage />

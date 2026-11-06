@@ -4,5 +4,6 @@ const orderController = require('../controller/orderController');
 const { authenticate } = require('../middleware/authMiddleware');
 
 router.post('/', authenticate, orderController.createOrder);
+router.get('/', authenticate, orderController.getOrders);
 
 module.exports = router;

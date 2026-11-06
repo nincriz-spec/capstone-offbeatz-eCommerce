@@ -32,4 +32,14 @@ async function createOrder(customerId, items, address) {
     return { orderId, total };
 }
 
-module.exports = { createOrder };
+async function getOrders(customerId) {
+    const orders = await orderData.getOrdersByCustomer(customerId);
+    const items = await orderData.getOrderItemsByCustomer(customerId);
+
+    return orders.map((o) => ({
+        ...o,
+        items: items.filter((i) => i.order_id === o.order_id),
+    }));
+}
+
+module.exports = { createOrder, getOrders };

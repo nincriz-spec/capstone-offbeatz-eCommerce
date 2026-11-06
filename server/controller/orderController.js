@@ -14,4 +14,14 @@ async function createOrder(req, res) {
     }
 }
 
-module.exports = { createOrder };
+async function getOrders(req, res) {
+    try {
+        const orders = await orderService.getOrders(req.user.customerId);
+        res.json(orders);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Could not load orders' });
+    }
+}
+
+module.exports = { createOrder, getOrders };

@@ -1,0 +1,140 @@
+import { useEffect, useState } from "react";
+import { Link } from "wouter";
+import axios from "axios";
+import { useAuth } from "../AuthStore";
+
+const orderTabs = [
+  { key: "all", label: "All", statuses: [] },
+  { key: "processing", label: "Processing", statuses: ["pending", "paid"] },
+  { key: "shipped", label: "Shipped", statuses: ["shipped"] },
+  { key: "received", label: "Received", statuses: ["delivered"] },
+  { key: "refund", label: "Return / refund", statuses: ["cancelled"] },
+];
+
+export default function Account() {
+  const { isLoggedIn, token } = useAuth();
+  const [tab, setTab] = useState("profile");
+  const [orderTab, setOrderTab] = useState("all");
+  const [profile, setProfile] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const headers = { Authorization: `Bearer ${token}` };
+
+    axios
+      .get("/api/users/me", { headers })
+      .then((res) => setProfile(res.data))
+      .catch(() => setError("Could not load your profile. Please log in again."));
+
+    axios
+      .get("/api/orders", { headers })
+      .then((res) => setOrders(res.data))
+      .catch(() => setError("Could not load your orders. Please log in again."));
+  }, [isLoggedIn, token]);
+
+  if (!isLoggedIn) {
+    return (
+      <section className="page">
+        <h2>My account</h2>
+        <p>Please log in to see your account.</p>
+        <Link href="/login" className="btn">Log in</Link>
+      </section>
+    );
+  }
+
+  const currentTab = orderTabs.find((t) => t.key === orderTab);
+  const visibleOrders = orders.filter(
+    (o) => orderTab === "all" || currentTab.statuses.includes(o.status)
+  );
+
+  return (
+    <section className="page">
+      <h2>My account</h2>
+
+      <div className="account-layout">
+        <nav className="account-menu">
+          <button
+            className={tab === "profile" ? "account-menu-item active" : "account-menu-item"}
+            onClick={() => setTab("profile")}
+          >
+            Profile
+          </button>
+          <button
+            className={tab === "orders" ? "account-menu-item active" : "account-menu-item"}
+            onClick={() => setTab("orders")}
+          >
+            My orders
+          </button>
+          <button
+            className={tab === "addresses" ? "account-menu-item active" : "account-menu-item"}
+            onClick={() => setTab("addresses")}
+          >
+            Addresses
+          </button>
+        </nav>
+
+        <div className="account-content">
+          {error && <p className="form-error">{error}</p>}
+
+          {tab === "profile" && (
+            <div>
+              <h3>Profile details</h3>
+              {profile && (
+                <>
+                  <div className="profile-row"><span>Name</span><span>{profile.name}</span></div>
+                  <div className="profile-row"><span>Email</span><span>{profile.email}</span></div>
+                  <div className="profile-row"><span>Phone</span><span>{profile.phone}</span></div>
+                </>
+              )}
+            </div>
+          )}
+
+          {tab === "orders" && (
+            <div>
+              <h3>My orders</h3>
+
+              <div className="order-tabs">
+                {orderTabs.map((t) => (
+                  <button
+                    key={t.key}
+                    className={t.key === orderTab ? "filter-pill active" : "filter-pill"}
+                    onClick={() => setOrderTab(t.key)}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {visibleOrders.length === 0 && <p>No orders here yet.</p>}
+
+              {visibleOrders.map((o) => (
+                <div className="order-card" key={o.order_id}>
+                  <div className="order-card-head">
+                    <span>Order #{o.order_id}</span>
+                    <span>{new Date(o.created_at).toLocaleDateString()}</span>
+                    <span className="order-status">{o.status}</span>
+                  </div>
+
+                  {o.items.map((item) => (
+                    <div className="summary-row" key={item.order_id + "-" + item.variant_id}>
+                      <span>
+                        {item.name} ({item.color} / {item.size}) × {item.quantity}
+                      </span>
+                      <span>${item.unit_price * item.quantity}</span>
+                    </div>
+                  ))}
+
+                  <p className="cart-total">Total: ${o.total}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === "addresses" && <p>Your addresses will show here soon.</p>}
+        </div>
+      </div>
+    </section>
+  );
+}

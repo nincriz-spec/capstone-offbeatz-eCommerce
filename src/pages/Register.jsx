@@ -1,6 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import axios from "axios";
+import { useFlash } from "../FlashStore";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
@@ -25,9 +27,25 @@ const initialValues = {
 };
 
 export default function Register() {
+  const [, navigate] = useLocation();
+  const { showMessage } = useFlash();
+
   async function handleSubmit(values) {
-    console.log("Register attempt for:", values.email);
-    // later: send name, email, phone and password with axios (not confirm)
+    try {
+      await axios.post("/api/users/register", {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        password: values.password,
+      });
+      showMessage("Account created. Please log in.", "success");
+      navigate("/login");
+    } catch (err) {
+      showMessage(
+        err.response?.data?.message || "Could not create the account.",
+        "error"
+      );
+    }
   }
 
   return (
