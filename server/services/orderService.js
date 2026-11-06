@@ -42,4 +42,8 @@ async function getOrders(customerId) {
     }));
 }
 
-module.exports = { createOrder, getOrders };
+async function cancelOrder(customerId, orderId) {
+    await orderData.cancelOrder(orderId, customerId);
+    return { message: 'Order cancelled' };
+}
+module.exports = { createOrder, getOrders, cancelOrder };

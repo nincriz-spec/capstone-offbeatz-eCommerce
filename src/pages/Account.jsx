@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import axios from "axios";
 import { useAuth } from "../AuthStore";
+import { useFlash } from "../FlashStore";
 import ProfileTab from "../ProfileTab";
 import AddressesTab from "../AddressesTab";
 
@@ -15,6 +16,7 @@ const orderTabs = [
 
 export default function Account() {
   const { isLoggedIn, token } = useAuth();
+  const { showMessage } = useFlash();
   const [tab, setTab] = useState("profile");
   const [orderTab, setOrderTab] = useState("all");
   const [profile, setProfile] = useState(null);
@@ -41,6 +43,20 @@ export default function Account() {
       .then((res) => setAddresses(res.data))
       .catch(() => setError("Could not load your addresses. Please log in again."));
   }, [isLoggedIn, token]);
+
+  async function handleCancel(orderId) {
+    if (!window.confirm("Cancel this order?")) return;
+    const headers = { Authorization: `Bearer ${token}` };
+
+    try {
+      await axios.put(`/api/orders/${orderId}/cancel`, {}, { headers });
+      const res = await axios.get("/api/orders", { headers });
+      setOrders(res.data);
+      showMessage("Order cancelled", "success");
+    } catch (err) {
+      showMessage(err.response?.data?.error || "Could not cancel the order", "error");
+    }
+  }
 
   if (!isLoggedIn) {
     return (
@@ -126,6 +142,14 @@ export default function Account() {
                   ))}
 
                   <p className="cart-total">Total: ${o.total}</p>
+
+                  {o.status === "pending" && (
+                    <div className="form-actions">
+                      <button className="btn" onClick={() => handleCancel(o.order_id)}>
+                        Cancel order
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

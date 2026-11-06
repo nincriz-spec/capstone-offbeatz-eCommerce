@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useCart } from "../ShopCart";
 import axios from "axios";
@@ -10,9 +10,50 @@ export default function Checkout() {
   const [block, setBlock] = useState("");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [saved, setSaved] = useState([]);
+  const [choice, setChoice] = useState("new");
   const [error, setError] = useState("");
   const [placed, setPlaced] = useState(false);
   const [sending, setSending] = useState(false);
+
+  // copy a saved address into the 4 fields
+  function fillFrom(a) {
+    setStreet(a.street);
+    setBlock(a.block);
+    setCity(a.city);
+    setPostalCode(a.postal_code);
+    setChoice(String(a.address_id));
+  }
+
+  // load the customer's saved addresses once
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    axios
+      .get("/api/users/addresses", { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => {
+        setSaved(res.data);
+        if (res.data.length > 0) {
+          fillFrom(res.data[0]);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  function handleChoose(e) {
+    const value = e.target.value;
+    if (value === "new") {
+      setStreet("");
+      setBlock("");
+      setCity("");
+      setPostalCode("");
+      setChoice("new");
+    } else {
+      const a = saved.find((x) => String(x.address_id) === value);
+      fillFrom(a);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -77,6 +118,8 @@ export default function Checkout() {
     );
   }
 
+  const showForm = saved.length === 0 || choice === "new";
+
   return (
     <section className="page">
       <h2>Checkout</h2>
@@ -85,17 +128,35 @@ export default function Checkout() {
         <form className="auth-form" onSubmit={handleSubmit}>
           <h3>Shipping address</h3>
 
-          <label htmlFor="street">Street</label>
-          <input id="street" value={street} onChange={(e) => setStreet(e.target.value)} />
+          {saved.length > 0 && (
+            <>
+              <label htmlFor="saved">Choose an address</label>
+              <select id="saved" value={choice} onChange={handleChoose}>
+                {saved.map((a) => (
+                  <option key={a.address_id} value={String(a.address_id)}>
+                    {a.street}, {a.block}, {a.city} {a.postal_code}
+                  </option>
+                ))}
+                <option value="new">+ Use a new address</option>
+              </select>
+            </>
+          )}
 
-          <label htmlFor="block">Block / Unit</label>
-          <input id="block" value={block} onChange={(e) => setBlock(e.target.value)} />
+          {showForm && (
+            <>
+              <label htmlFor="street">Street</label>
+              <input id="street" value={street} onChange={(e) => setStreet(e.target.value)} />
 
-          <label htmlFor="city">City</label>
-          <input id="city" value={city} onChange={(e) => setCity(e.target.value)} />
+              <label htmlFor="block">Block / Unit</label>
+              <input id="block" value={block} onChange={(e) => setBlock(e.target.value)} />
 
-          <label htmlFor="postal">Postal code</label>
-          <input id="postal" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
+              <label htmlFor="city">City</label>
+              <input id="city" value={city} onChange={(e) => setCity(e.target.value)} />
+
+              <label htmlFor="postal">Postal code</label>
+              <input id="postal" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
+            </>
+          )}
 
           {error && <p className="form-error">{error}</p>}
 
