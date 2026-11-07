@@ -3,14 +3,17 @@ import { Link, useLocation } from "wouter";
 import { useCart } from "./ShopCart";
 import { useAuth } from "./AuthStore";
 import { useFlash } from "./FlashStore";
+import getRole from "./getRole";
 import "./Header.css";
 
 export default function Header() {
   const { cart } = useCart();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, token, logout } = useAuth();
   const { showMessage } = useFlash();
   const [open, setOpen] = useState(false);
   const [location, navigate] = useLocation();
+
+  const isAdmin = isLoggedIn && getRole(token) === "admin";
 
   let count = 0;
   for (const item of cart) {
@@ -54,6 +57,9 @@ export default function Header() {
           {isLoggedIn ? (
             <>
               <Link href="/account" onClick={() => setOpen(false)}>My account</Link>
+              {isAdmin && (
+                <Link href="/admin" onClick={() => setOpen(false)}>Admin</Link>
+              )}
               <a href="/" onClick={(e) => { e.preventDefault(); handleLogout(); }}>Log out</a>
             </>
           ) : (

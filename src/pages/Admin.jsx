@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import axios from "axios";
 import { useAuth } from "../AuthStore";
 import { useFlash } from "../FlashStore";
+import getRole from "../getRole";
 
 // which status can go to which (the server checks this again)
 const nextStatuses = {
