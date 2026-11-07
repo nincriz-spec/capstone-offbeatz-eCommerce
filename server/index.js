@@ -23,6 +23,9 @@ app.use('/api/users', usersRouter);
 const ordersRouter = require('./routes/orders');
 app.use('/api/orders', ordersRouter);
 
+const adminRouter = require('./routes/admin');
+app.use('/api/admin', adminRouter);
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

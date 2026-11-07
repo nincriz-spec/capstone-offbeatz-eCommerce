@@ -554,3 +554,22 @@ html { scroll-behavior: smooth; }
   color: #fff;
   font-weight: 600;
 }
+.admin-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.admin-status label {
+  font-size: 13px;
+  color: #999;
+}
+
+.admin-status select {
+  padding: 6px 10px;
+  background: #141210;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 6px;
+}
