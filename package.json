@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "axios": "^1.21.0",
+    "ejs": "^7.0.2",
+    "express-session": "^1.19.0",
     "formik": "^2.4.9",
     "jotai": "^3.0.1",
     "react": "^19.3.1",

@@ -58,7 +58,7 @@ export default function Header() {
             <>
               <Link href="/account" onClick={() => setOpen(false)}>My account</Link>
               {isAdmin && (
-                <Link href="/admin" onClick={() => setOpen(false)}>Admin</Link>
+              <a href="/dashboard/login" onClick={() => setOpen(false)}>Admin</a>
               )}
               <a href="/" onClick={(e) => { e.preventDefault(); handleLogout(); }}>Log out</a>
             </>
