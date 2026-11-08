@@ -27,4 +27,4 @@ async function updateOrderStatus(adminId, orderId, newStatus) {
     return { message: 'Status updated' };
 }
 
-module.exports = { getAllOrders, updateOrderStatus };
+module.exports = { getAllOrders, updateOrderStatus, allowedNext };

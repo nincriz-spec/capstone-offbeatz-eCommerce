@@ -11,6 +11,11 @@ function requireAdminSession(req, res, next) {
 }
 
 router.get('/login', dashboardController.showLogin);
+router.post('/login', dashboardController.login);
+router.post('/logout', requireAdminSession, dashboardController.logout);
 router.get('/', requireAdminSession, dashboardController.showHome);
+
+router.get('/orders', requireAdminSession, dashboardController.showOrders);
+router.post('/orders/:id/status', requireAdminSession, dashboardController.changeOrderStatus);
 
 module.exports = router;

@@ -37,7 +37,7 @@ async function loginUser(email, password) {
 
     const user = await userData.getUserByEmail(email.trim());
     if (!user) {
-        throw new Error('Invalid email or password');
+        throw new Error('Invalid credentials');
     }
 
     const match = await bcrypt.compare(password, user.password);
