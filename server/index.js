@@ -1,14 +1,40 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
 const pool = require('./database');
 
+// Tell Express to use EJS, and where the pages (views) live
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Codespaces and hosting sites sit behind a proxy, so trust it
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(express.json());
+// Lets the server read normal HTML form posts (the EJS login form)
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
+
+// Session = the server's memory of who is logged in (used by the dashboard)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,                                // JavaScript in the browser cannot read it
+      sameSite: 'lax',                               // helps block other sites from using it
+      secure: process.env.NODE_ENV === 'production', // https only when deployed
+      maxAge: 1000 * 60 * 60,                        // 1 hour
+    },
+  })
+);
 
 // Routes
 app.get('/', (req, res) => {
@@ -28,6 +54,10 @@ app.use('/api/admin', adminRouter);
 
 const assistantRouter = require('./routes/assistant');
 app.use('/api/assistant', assistantRouter);
+
+// Admin dashboard (EJS pages)
+const dashboardRouter = require('./routes/dashboard');
+app.use('/dashboard', dashboardRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3000;

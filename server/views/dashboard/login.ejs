@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header>
+  <%- include('../partials/header'); %>
+</header>
+
+<main>
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card p-4">
+        <h1 class="h3 mb-3">Admin login</h1>
+
+        <% if (error) { %>
+          <div class="alert alert-danger" role="alert"><%= error %></div>
+        <% } %>
+
+        <form method="POST" action="/dashboard/login">
+          <label for="email" class="form-label">Email</label>
+          <input id="email" name="email" type="email" class="form-control mb-3" required>
+
+          <label for="password" class="form-label">Password</label>
+          <input id="password" name="password" type="password" class="form-control mb-3" required>
+
+          <button type="submit" class="btn btn-dark w-100">Log in</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>
