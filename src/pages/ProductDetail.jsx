@@ -4,6 +4,7 @@ import { useProducts } from "../hooks/useProducts";
 import { useCart } from "../ShopCart";
 import { useFlash } from "../FlashStore";
 
+
 export default function ProductDetail() {
   const { id } = useParams();
   const { products, loading } = useProducts();
@@ -101,6 +102,7 @@ export default function ProductDetail() {
             Add to bag
           </button>
         </div>
+        
       </div>
     </section>
   );

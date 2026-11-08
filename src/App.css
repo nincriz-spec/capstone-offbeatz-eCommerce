@@ -554,22 +554,121 @@ html { scroll-behavior: smooth; }
   color: #fff;
   font-weight: 600;
 }
-.admin-status {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 12px;
+.chat-box {
+  margin-top: 32px;
+  padding: 16px;
+  border: 1px solid rgba(255, 90, 31, 0.5);
+  border-radius: 8px;
+  max-width: 560px;
 }
 
-.admin-status label {
-  font-size: 13px;
-  color: #999;
-}
-
-.admin-status select {
-  padding: 6px 10px;
-  background: #141210;
+.chat-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 999px;
   color: #fff;
-  border: 1px solid #555;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff5a1f, #e0282e);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.chat-box {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  flex-direction: column;
+  background: #120c0c;
+  border: 1px solid rgba(255, 90, 31, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ff5a1f, #e0282e);
+  color: #fff;
+}
+
+.chat-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chat-messages {
+  height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  padding: 12px;
+}
+
+.chat-message {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 85%;
+  background: #241b1b;
+}
+
+.chat-you {
+  margin-left: auto;
+  background: rgba(255, 90, 31, 0.25);
+}
+
+.chat-hint {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.chat-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #2a2020;
+}
+
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
+  background: #1a1414;
+  color: #fff;
+  border: 1px solid #444;
   border-radius: 6px;
+}
+.admin-upload {
+  margin-bottom: 32px;
+  padding: 16px;
+  max-width: 460px;
+  border: 1px solid rgba(255, 90, 31, 0.5);
+  border-radius: 8px;
+}
+
+.admin-upload label {
+  display: block;
+  margin: 12px 0 4px;
+}
+
+.admin-upload select,
+.admin-upload input[type="file"] {
+  width: 100%;
+  margin-bottom: 8px;
 }

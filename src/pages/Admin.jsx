@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import axios from "axios";
 import { useAuth } from "../AuthStore";
 import { useFlash } from "../FlashStore";
-import getRole from "../getRole";
+import { useProducts } from "../hooks/useProducts";
 
 // which status can go to which (the server checks this again)
 const nextStatuses = {
@@ -27,8 +27,14 @@ function getRole(token) {
 export default function Admin() {
   const { isLoggedIn, token } = useAuth();
   const { showMessage } = useFlash();
+  const { products } = useProducts();
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
+
+  // upload form
+  const [productId, setProductId] = useState("");
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const role = isLoggedIn ? getRole(token) : null;
 
@@ -60,6 +66,38 @@ export default function Admin() {
     }
   }
 
+  async function handleUpload(e) {
+    e.preventDefault();
+    const form = e.target;
+
+    if (!productId) {
+      showMessage("Please choose a product", "error");
+      return;
+    }
+    if (!file) {
+      showMessage("Please choose a PDF file", "error");
+      return;
+    }
+
+    // a file must be sent as FormData, not as plain JSON
+    const formData = new FormData();
+    formData.append("pdf", file);
+
+    setUploading(true);
+    try {
+      const res = await axios.post(`/api/admin/products/${productId}/pdf`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      showMessage("PDF uploaded. " + res.data.chunks + " chunks saved.", "success");
+      setFile(null);
+      form.reset();
+    } catch (err) {
+      showMessage(err.response?.data?.message || "Could not upload the PDF", "error");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   if (!isLoggedIn) {
     return (
       <section className="page">
@@ -81,7 +119,38 @@ export default function Admin() {
 
   return (
     <section className="page">
-      <h2>Admin: all orders</h2>
+      <h2>Admin</h2>
+
+      <div className="admin-upload">
+        <h3>Upload a product PDF for the assistant</h3>
+        <form onSubmit={handleUpload}>
+          <label htmlFor="upload-product">Product</label>
+          <select
+            id="upload-product"
+            value={productId}
+            onChange={(e) => setProductId(e.target.value)}
+          >
+            <option value="">Choose a product...</option>
+            {products.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+
+          <label htmlFor="upload-file">PDF file (max 5 MB)</label>
+          <input
+            id="upload-file"
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => setFile(e.target.files[0] || null)}
+          />
+
+          <button className="btn" type="submit" disabled={uploading}>
+            {uploading ? "Uploading... please wait" : "Upload PDF"}
+          </button>
+        </form>
+      </div>
+
+      <h3>All orders</h3>
 
       {error && <p className="form-error">{error}</p>}
       {orders.length === 0 && !error && <p>No orders yet.</p>}
