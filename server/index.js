@@ -4,6 +4,8 @@ const path = require('path');
 const session = require('express-session');
 require('dotenv').config();
 
+const { loginLimiter } = require('./rateLimiters');
+
 const app = express();
 const pool = require('./database');
 
@@ -35,6 +37,9 @@ app.use(
     },
   })
 );
+
+// Rate limit on the shop login
+app.use('/api/users/login', loginLimiter);
 
 // Routes
 app.get('/', (req, res) => {

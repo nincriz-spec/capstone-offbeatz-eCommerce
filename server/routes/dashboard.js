@@ -4,6 +4,7 @@ const fileUpload = require('express-fileupload');
 const router = express.Router();
 const dashboardController = require('../controller/dashboardController');
 const productController = require('../controller/dashboardProductController');
+const { dashboardLoginLimiter } = require('../rateLimiters');
 
 // Makes a secret token for this session and shares it with every page
 function csrfSetup(req, res, next) {
@@ -36,7 +37,7 @@ function requireAdminSession(req, res, next) {
 router.use(csrfSetup);
 
 router.get('/login', dashboardController.showLogin);
-router.post('/login', csrfCheck, dashboardController.login);
+router.post('/login', dashboardLoginLimiter, csrfCheck, dashboardController.login);
 router.post('/logout', requireAdminSession, csrfCheck, dashboardController.logout);
 router.get('/', requireAdminSession, dashboardController.showHome);
 
