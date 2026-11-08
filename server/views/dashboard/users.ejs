@@ -1,0 +1,52 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<main class="container">
+  <h1 class="h3 mt-4">Users</h1>
+  <p class="text-muted">All registered accounts. Passwords are never shown.</p>
+
+  <form method="GET" action="/dashboard/users" class="row g-2 mb-3">
+    <div class="col-md-5">
+      <label class="form-label" for="search">Name or email</label>
+      <input class="form-control" id="search" name="search" value="<%= values.search %>">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" for="role">Role</label>
+      <select class="form-select" id="role" name="role">
+        <option value="">All</option>
+        <option value="customer" <%= values.role === 'customer' ? 'selected' : '' %>>customer</option>
+        <option value="admin" <%= values.role === 'admin' ? 'selected' : '' %>>admin</option>
+      </select>
+    </div>
+    <div class="col-md-4 d-flex align-items-end gap-2">
+      <button class="btn btn-dark" type="submit">Search</button>
+      <a class="btn btn-outline-secondary" href="/dashboard/users">Clear</a>
+    </div>
+  </form>
+
+  <p class="text-muted">Showing <%= rows.length %> user(s)</p>
+
+  <table class="table table-bordered align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th>
+        <th>Role</th><th>Orders</th><th>Joined</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rows.forEach(function (u) { %>
+        <tr>
+          <td>#<%= u.customer_id %></td>
+          <td><%= u.name %></td>
+          <td><%= u.email %></td>
+          <td><%= u.phone %></td>
+          <td><span class="badge <%= u.role === 'admin' ? 'bg-dark' : 'bg-secondary' %>"><%= u.role %></span></td>
+          <td><%= u.order_count %></td>
+          <td><%= new Date(u.created_at).toLocaleDateString('en-GB') %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</main>
+
+<%- include('../partials/footer') %>

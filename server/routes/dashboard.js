@@ -2,8 +2,10 @@ const express = require('express');
 const crypto = require('crypto');
 const fileUpload = require('express-fileupload');
 const router = express.Router();
+const dashboardUserController = require('../controller/dashboardUserController');
 const dashboardController = require('../controller/dashboardController');
 const productController = require('../controller/dashboardProductController');
+const auditController = require('../controller/dashboardAuditController');
 const { dashboardLoginLimiter } = require('../rateLimiters');
 
 // Makes a secret token for this session and shares it with every page
@@ -43,6 +45,9 @@ router.get('/', requireAdminSession, dashboardController.showHome);
 
 router.get('/orders', requireAdminSession, dashboardController.showOrders);
 router.post('/orders/:id/status', requireAdminSession, csrfCheck, dashboardController.changeOrderStatus);
+
+router.get('/audit', requireAdminSession, auditController.showAudit);
+router.get('/users', requireAdminSession, dashboardUserController.showUsers);
 
 router.get('/products', requireAdminSession, productController.showProducts);
 router.get('/products/new', requireAdminSession, productController.showNewForm);

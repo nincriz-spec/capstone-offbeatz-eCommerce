@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header>
+  <%- include('../partials/header'); %>
+</header>
+
+<main>
+  <h1 class="h3 mb-3">Audit trail</h1>
+  <p class="text-muted">Every order status change: who made it and when. Showing the latest 200.</p>
+
+  <form method="GET" action="/dashboard/audit" class="row g-2 mb-3">
+    <div class="col-md-3">
+      <label for="orderId" class="form-label">Order number</label>
+      <input id="orderId" name="orderId" type="number" min="1" class="form-control" value="<%= values.orderId %>">
+    </div>
+    <div class="col-md-4 d-flex align-items-end gap-2">
+      <button type="submit" class="btn btn-dark">Search</button>
+      <a href="/dashboard/audit" class="btn btn-outline-secondary">Clear</a>
+    </div>
+  </form>
+
+  <p class="text-muted">Showing <%= rows.length %> change(s)</p>
+
+  <% if (rows.length === 0) { %>
+    <p>No changes found.</p>
+  <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">When</th>
+            <th scope="col">Order</th>
+            <th scope="col">Change</th>
+            <th scope="col">Changed by</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.forEach(function(row) { %>
+            <tr>
+              <td><%= new Date(row.changed_at).toLocaleString('en-SG') %></td>
+              <td>#<%= row.order_id %></td>
+              <td>
+                <span class="badge text-bg-secondary"><%= row.from_status || 'new' %></span>
+                &rarr;
+                <span class="badge text-bg-dark"><%= row.to_status %></span>
+              </td>
+              <td><%= row.changed_by_name || 'Unknown' %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</main>
+
+<footer>
+  <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>
