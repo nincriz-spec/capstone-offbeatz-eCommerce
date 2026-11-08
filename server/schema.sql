@@ -211,3 +211,36 @@ create table order_status_history(
     on delete set null
     on update restrict
 ) engine = innodb;
+
+-- ---------------------------------------------------------
+-- AI assistant (RAG): uploaded PDFs and their text chunks
+-- ---------------------------------------------------------
+
+CREATE TABLE pdf (
+  pdf_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  filename VARCHAR(255) NOT NULL,
+  original_filename VARCHAR(255) NOT NULL,
+  file_path VARCHAR(500) NOT NULL,
+  file_size INT DEFAULT NULL,
+  upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (pdf_id)
+);
+
+CREATE TABLE pdf_chunk (
+  chunk_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  pdf_id INT UNSIGNED NOT NULL,
+  chunk_text TEXT NOT NULL,
+  chunk_order INT NOT NULL,
+  embedding VECTOR(768) NOT NULL,
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (chunk_id),
+  KEY idx_pdf_id (pdf_id),
+  VECTOR KEY (embedding) DISTANCE=cosine,
+  CONSTRAINT fk_chunk_pdf FOREIGN KEY (pdf_id) REFERENCES pdf (pdf_id) ON DELETE CASCADE
+);
+
+-- each product can have one PDF for the assistant
+ALTER TABLE product
+  ADD COLUMN pdf_id INT UNSIGNED DEFAULT NULL,
+  ADD KEY fk_product_pdf (pdf_id),
+  ADD CONSTRAINT fk_product_pdf FOREIGN KEY (pdf_id) REFERENCES pdf (pdf_id) ON DELETE SET NULL;
