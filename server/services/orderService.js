@@ -1,7 +1,7 @@
 const orderData = require('../data/orderData');
 
 async function createOrder(customerId, items, address) {
-    if (!items || items.length === 0) {
+    if (!Array.isArray(items) || items.length === 0) {
         throw new Error('Cart is empty');
     }
 
@@ -9,21 +9,32 @@ async function createOrder(customerId, items, address) {
         throw new Error('Please enter a full address');
     }
 
+    // check every quantity, and add up lines that repeat the same variant
+    const quantities = {};
+    for (const item of items) {
+        const quantity = Number(item.quantity);
+        if (!Number.isInteger(quantity) || quantity < 1) {
+            throw new Error('Quantity must be a whole number of at least 1');
+        }
+        quantities[item.variantId] = (quantities[item.variantId] || 0) + quantity;
+    }
+
     let total = 0;
     const lines = [];
 
-    for (const item of items) {
-        const variant = await orderData.getVariantById(item.variantId);
+    for (const variantId of Object.keys(quantities)) {
+        const quantity = quantities[variantId];
+        const variant = await orderData.getVariantById(variantId);
         if (!variant) {
             throw new Error('Item not found');
         }
-        if (variant.stock_qty < item.quantity) {
+        if (variant.stock_qty < quantity) {
             throw new Error('Not enough stock');
         }
-        total += Number(variant.price) * item.quantity;
+        total += Number(variant.price) * quantity;
         lines.push({
             variantId: variant.variant_id,
-            quantity: item.quantity,
+            quantity: quantity,
             unitPrice: Number(variant.price)
         });
     }
@@ -46,4 +57,5 @@ async function cancelOrder(customerId, orderId) {
     await orderData.cancelOrder(orderId, customerId);
     return { message: 'Order cancelled' };
 }
+
 module.exports = { createOrder, getOrders, cancelOrder };
