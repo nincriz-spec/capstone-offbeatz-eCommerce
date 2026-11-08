@@ -20,6 +20,7 @@
         <% } %>
 
         <form method="POST" action="/dashboard/login">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <label for="email" class="form-label">Email</label>
           <input id="email" name="email" type="email" class="form-control mb-3" required>
 

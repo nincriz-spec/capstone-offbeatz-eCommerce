@@ -9,8 +9,30 @@ const allowedNext = {
     cancelled: [],
 };
 
-async function getAllOrders() {
-    const orders = await adminData.getAllOrders();
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+// Keep only filters that are valid. Anything strange is ignored.
+function cleanFilters(filters = {}) {
+    const clean = {};
+
+    if (typeof filters.status === 'string' && Object.keys(allowedNext).includes(filters.status)) {
+        clean.status = filters.status;
+    }
+    if (typeof filters.search === 'string' && filters.search.trim()) {
+        clean.search = filters.search.trim().slice(0, 100);
+    }
+    if (typeof filters.fromDate === 'string' && datePattern.test(filters.fromDate)) {
+        clean.fromDate = filters.fromDate;
+    }
+    if (typeof filters.toDate === 'string' && datePattern.test(filters.toDate)) {
+        clean.toDate = filters.toDate;
+    }
+
+    return clean;
+}
+
+async function getAllOrders(filters) {
+    const orders = await adminData.getAllOrders(cleanFilters(filters));
     const items = await adminData.getAllOrderItems();
 
     return orders.map((o) => ({

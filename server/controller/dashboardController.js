@@ -57,7 +57,23 @@ function showHome(req, res) {
 
 async function showOrders(req, res) {
   try {
-    const orders = await adminService.getAllOrders();
+    // What the admin typed in the filter form (comes from the web address)
+    const filters = {
+      status: req.query.status,
+      search: req.query.search,
+      fromDate: req.query.fromDate,
+      toDate: req.query.toDate,
+    };
+
+    const orders = await adminService.getAllOrders(filters);
+
+    // Values to put back into the form boxes after searching
+    const values = {
+      status: typeof filters.status === 'string' ? filters.status : '',
+      search: typeof filters.search === 'string' ? filters.search : '',
+      fromDate: typeof filters.fromDate === 'string' ? filters.fromDate : '',
+      toDate: typeof filters.toDate === 'string' ? filters.toDate : '',
+    };
 
     // A one-time message (like "Order updated"), then we forget it
     const flash = req.session.flash || null;
@@ -68,6 +84,7 @@ async function showOrders(req, res) {
       admin: req.session.admin,
       orders,
       allowedNext: adminService.allowedNext,
+      values,
       flash,
     });
   } catch (err) {

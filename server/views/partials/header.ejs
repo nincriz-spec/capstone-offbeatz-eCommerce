@@ -3,10 +3,12 @@
   <% if (typeof admin !== 'undefined') { %>
     <ul class="navbar-nav me-auto">
       <li class="nav-item"><a class="nav-link" href="/dashboard/orders">Orders</a></li>
+      <li class="nav-item"><a class="nav-link" href="/dashboard/products">Products</a></li>
     </ul>
     <div class="ms-auto d-flex align-items-center gap-3">
       <span class="navbar-text"><%= admin.name %></span>
       <form method="POST" action="/dashboard/logout" class="m-0">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <button type="submit" class="btn btn-outline-light btn-sm">Log out</button>
       </form>
     </div>

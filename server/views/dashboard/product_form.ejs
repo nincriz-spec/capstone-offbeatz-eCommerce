@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header>
+  <%- include('../partials/header'); %>
+</header>
+
+<main>
+  <h1 class="h3 mb-3"><%= heading %></h1>
+
+  <% if (error) { %>
+    <div class="alert alert-danger" role="alert"><%= error %></div>
+  <% } %>
+
+  <form method="POST" action="<%= action %>" class="row g-3">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="col-md-8">
+      <label for="name" class="form-label">Name</label>
+      <input id="name" name="name" type="text" class="form-control" maxlength="255" required value="<%= product.name || '' %>">
+    </div>
+
+    <div class="col-md-4">
+      <label for="price" class="form-label">Price ($)</label>
+      <input id="price" name="price" type="number" step="0.01" min="0.01" class="form-control" required value="<%= product.price || '' %>">
+    </div>
+
+    <div class="col-md-4">
+      <label for="category_id" class="form-label">Category</label>
+      <select id="category_id" name="category_id" class="form-select" required>
+        <option value="">Choose...</option>
+        <% categories.forEach(function(c) { %>
+          <option value="<%= c.category_id %>" <%= String(product.category_id) === String(c.category_id) ? 'selected' : '' %>><%= c.name %></option>
+        <% }); %>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="fit" class="form-label">Fit</label>
+      <select id="fit" name="fit" class="form-select">
+        <% fitOptions.forEach(function(f) { %>
+          <option value="<%= f %>" <%= product.fit === f ? 'selected' : '' %>><%= f %></option>
+        <% }); %>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="gender" class="form-label">Gender</label>
+      <select id="gender" name="gender" class="form-select">
+        <% genderOptions.forEach(function(g) { %>
+          <option value="<%= g %>" <%= product.gender === g ? 'selected' : '' %>><%= g %></option>
+        <% }); %>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="fabric" class="form-label">Fabric</label>
+      <input id="fabric" name="fabric" type="text" class="form-control" maxlength="80" value="<%= product.fabric || '' %>">
+    </div>
+
+    <div class="col-md-4">
+      <label for="gsm" class="form-label">GSM</label>
+      <input id="gsm" name="gsm" type="number" min="1" max="1000" class="form-control" value="<%= product.gsm || '' %>">
+    </div>
+
+    <div class="col-md-4">
+      <label for="drop_name" class="form-label">Drop name</label>
+      <input id="drop_name" name="drop_name" type="text" class="form-control" maxlength="80" value="<%= product.drop_name || '' %>">
+    </div>
+
+    <div class="col-12">
+      <label for="care_instructions" class="form-label">Care instructions</label>
+      <input id="care_instructions" name="care_instructions" type="text" class="form-control" maxlength="255" value="<%= product.care_instructions || '' %>">
+    </div>
+
+    <div class="col-12">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" name="description" rows="4" class="form-control" maxlength="5000"><%= product.description || '' %></textarea>
+    </div>
+
+    <div class="col-12 d-flex gap-2">
+      <button type="submit" class="btn btn-dark">Save</button>
+      <a href="/dashboard/products" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+  <!-- the product form ENDS above. The PDF form below is a separate form. -->
+
+  <% if (productId) { %>
+    <hr class="my-4">
+    <h2 class="h5">Product PDF (for the AI assistant)</h2>
+    <form method="POST" action="/dashboard/products/<%= productId %>/pdf" enctype="multipart/form-data" class="row g-2 align-items-end">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="col-md-8">
+        <label for="pdf" class="form-label">Choose a PDF (max 5 MB)</label>
+        <input id="pdf" name="pdf" type="file" accept="application/pdf" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <button type="submit" class="btn btn-dark">Upload PDF</button>
+      </div>
+    </form>
+    <p class="text-muted small mt-2">Reading the PDF can take a few seconds. Please wait after you click.</p>
+  <% } %>
+</main>
+
+<footer>
+  <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header>
+  <%- include('../partials/header'); %>
+</header>
+
+<main>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">Products</h1>
+    <a href="/dashboard/products/new" class="btn btn-dark">Add product</a>
+  </div>
+
+  <% if (flash) { %>
+    <div class="alert alert-<%= flash.type %>" role="alert"><%= flash.text %></div>
+  <% } %>
+
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Category</th>
+          <th scope="col">Price</th>
+          <th scope="col">Fit</th>
+          <th scope="col">Gender</th>
+          <th scope="col">PDF</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(function(product) { %>
+          <tr>
+            <td><%= product.product_id %></td>
+            <td><%= product.name %></td>
+            <td><%= product.category_name %></td>
+            <td>$<%= product.price.toFixed(2) %></td>
+            <td><%= product.fit %></td>
+            <td><%= product.gender %></td>
+            <td><%= product.pdf_id ? 'Yes' : 'No' %></td>
+            <td>
+              <% if (product.is_active) { %>
+                <span class="badge text-bg-success">Visible</span>
+              <% } else { %>
+                <span class="badge text-bg-secondary">Hidden</span>
+              <% } %>
+            </td>
+            <td>
+              <div class="d-flex gap-2">
+                <a href="/dashboard/products/<%= product.product_id %>/edit" class="btn btn-outline-dark btn-sm">Edit</a>
+                <form method="POST" action="/dashboard/products/<%= product.product_id %>/active" class="m-0">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="active" value="<%= product.is_active ? '0' : '1' %>">
+                  <button type="submit" class="btn btn-dark btn-sm"><%= product.is_active ? 'Hide' : 'Show' %></button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<footer>
+  <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>

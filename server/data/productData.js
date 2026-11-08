@@ -1,6 +1,7 @@
 const pool = require('../database');
 
 async function getAllProducts() {
+    // Only visible products go to the shop (hidden ones have is_active = 0)
     const [rows] = await pool.execute(
         `SELECT
         p.product_id,
@@ -19,6 +20,7 @@ async function getAllProducts() {
         c.slug AS category_slug
         FROM product p
         JOIN category c ON p.category_id = c.category_id
+        WHERE p.is_active = 1
         `
     );
     return rows;
