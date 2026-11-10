@@ -1,9 +1,9 @@
 const pool = require('../database');
 
-async function getAllProducts() {
+// filters is optional: { search, minPrice, maxPrice, fit, gender, category }
+async function getAllProducts(filters = {}) {
     // Only visible products go to the shop (hidden ones have is_active = 0)
-    const [rows] = await pool.execute(
-        `SELECT
+    let sql = `SELECT
         p.product_id,
         p.name,
         CAST(p.price AS DOUBLE) AS price,
@@ -20,9 +20,35 @@ async function getAllProducts() {
         c.slug AS category_slug
         FROM product p
         JOIN category c ON p.category_id = c.category_id
-        WHERE p.is_active = 1
-        `
-    );
+        WHERE p.is_active = 1`;
+    const bindings = [];
+
+    if (filters.search) {
+        sql += ' AND (p.name LIKE ? OR p.description LIKE ?)';
+        bindings.push('%' + filters.search + '%', '%' + filters.search + '%');
+    }
+    if (filters.minPrice !== undefined) {
+        sql += ' AND p.price >= ?';
+        bindings.push(filters.minPrice);
+    }
+    if (filters.maxPrice !== undefined) {
+        sql += ' AND p.price <= ?';
+        bindings.push(filters.maxPrice);
+    }
+    if (filters.fit) {
+        sql += ' AND p.fit = ?';
+        bindings.push(filters.fit);
+    }
+    if (filters.gender) {
+        sql += ' AND p.gender = ?';
+        bindings.push(filters.gender);
+    }
+    if (filters.category) {
+        sql += ' AND c.slug = ?';
+        bindings.push(filters.category);
+    }
+
+    const [rows] = await pool.execute(sql, bindings);
     return rows;
 }
 
