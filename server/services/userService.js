@@ -7,7 +7,7 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phonePattern = /^[0-9+ ]{7,15}$/;
 
 // How long each pass lasts. Easy to change in one place.
-const ACCESS_EXPIRES = '8h';
+const ACCESS_EXPIRES = '15m';
 const REFRESH_EXPIRES = '7d';
 
 async function registerUser(name, email, password, phone, address) {

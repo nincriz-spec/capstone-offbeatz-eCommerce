@@ -1,6 +1,9 @@
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
-const cartAtom = atom([]);
+// Saved in the browser under the name "cart", so it survives a refresh.
+// getOnInit: read the saved cart straight away, so the bag is not empty for a split second.
+const cartAtom = atomWithStorage("cart", [], undefined, { getOnInit: true });
 
 export function useCart() {
     const [cart, setCart] = useAtom(cartAtom);

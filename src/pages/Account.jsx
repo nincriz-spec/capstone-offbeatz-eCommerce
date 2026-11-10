@@ -19,6 +19,9 @@ export default function Account() {
   const { showMessage } = useFlash();
   const [tab, setTab] = useState("profile");
   const [orderTab, setOrderTab] = useState("all");
+  const [orderSearch, setOrderSearch] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [profile, setProfile] = useState(null);
   const [orders, setOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
@@ -58,6 +61,13 @@ export default function Account() {
     }
   }
 
+  function clearOrderFilters() {
+    setOrderTab("all");
+    setOrderSearch("");
+    setFromDate("");
+    setToDate("");
+  }
+
   if (!isLoggedIn) {
     return (
       <section className="page">
@@ -69,9 +79,36 @@ export default function Account() {
   }
 
   const currentTab = orderTabs.find((t) => t.key === orderTab);
-  const visibleOrders = orders.filter(
-    (o) => orderTab === "all" || currentTab.statuses.includes(o.status)
-  );
+  const searchText = orderSearch.trim().toLowerCase().replace("#", "");
+  const hasOrderFilters =
+    orderTab !== "all" || searchText !== "" || fromDate !== "" || toDate !== "";
+
+  // An order stays in the list only if it passes every filter
+  const visibleOrders = orders.filter((o) => {
+    // 1. status tab
+    if (orderTab !== "all" && !currentTab.statuses.includes(o.status)) {
+      return false;
+    }
+    // 2. search: order number or a product name
+    if (searchText) {
+      const inNumber = String(o.order_id).includes(searchText);
+      const inItems = o.items.some((item) =>
+        item.name.toLowerCase().includes(searchText)
+      );
+      if (!inNumber && !inItems) {
+        return false;
+      }
+    }
+    // 3. date range (whole days)
+    const created = new Date(o.created_at);
+    if (fromDate && created < new Date(fromDate + "T00:00:00")) {
+      return false;
+    }
+    if (toDate && created > new Date(toDate + "T23:59:59")) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <section className="page">
@@ -122,7 +159,46 @@ export default function Account() {
                 ))}
               </div>
 
-              {visibleOrders.length === 0 && <p>No orders here yet.</p>}
+              <div
+                style={{ display: "flex", gap: "8px", flexWrap: "wrap", margin: "12px 0" }}
+              >
+                <input
+                  type="text"
+                  placeholder="Search order # or product"
+                  aria-label="Search orders by number or product name"
+                  value={orderSearch}
+                  onChange={(e) => setOrderSearch(e.target.value)}
+                />
+                <label>
+                  From{" "}
+                  <input
+                    type="date"
+                    aria-label="From date"
+                    value={fromDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                  />
+                </label>
+                <label>
+                  To{" "}
+                  <input
+                    type="date"
+                    aria-label="To date"
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                  />
+                </label>
+                <button className="filter-pill" onClick={clearOrderFilters}>
+                  Clear
+                </button>
+              </div>
+
+              <p>
+                Showing {visibleOrders.length} of {orders.length} order(s)
+              </p>
+
+              {visibleOrders.length === 0 && (
+                <p>{hasOrderFilters ? "No orders match your filters." : "No orders here yet."}</p>
+              )}
 
               {visibleOrders.map((o) => (
                 <div className="order-card" key={o.order_id}>
