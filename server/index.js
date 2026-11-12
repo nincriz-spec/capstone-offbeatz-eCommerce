@@ -42,7 +42,6 @@ app.use(
 app.use('/api/users/login', loginLimiter);
 
 // Routes
-// CHANGED: the old app.get('/') "Welcome to the API" is removed.
 // The shop (React) now answers at '/', see the bottom of this file.
 
 const productsRouter = require('./routes/products');

@@ -1,5 +1,15 @@
 const pool = require('../database');
 
+// The hosted database (TiDB) writes vector SQL differently from MariaDB.
+// DB_TYPE=tidb switches to TiDB's spelling. If it is not set, MariaDB is used.
+const IS_TIDB = process.env.DB_TYPE === 'tidb';
+
+// The two pieces of SQL that differ between the databases
+const VECTOR_VALUE = IS_TIDB ? '?' : 'VEC_FromText(?)';
+const DISTANCE = IS_TIDB
+  ? 'VEC_COSINE_DISTANCE(embedding, ?)'
+  : 'VEC_DISTANCE_COSINE(embedding, VEC_FromText(?))';
+
 // Save one PDF record. Returns the new pdf_id.
 async function insertPdf(connection, filename, originalFilename, filePath, fileSize) {
   const [result] = await connection.execute(
@@ -20,7 +30,7 @@ async function attachPdfToProduct(connection, productId, pdfId) {
 // Save one chunk of text together with its 768 numbers.
 async function insertChunk(connection, pdfId, chunkText, chunkOrder, embedding) {
   await connection.execute(
-    'INSERT INTO pdf_chunk (pdf_id, chunk_text, chunk_order, embedding) VALUES (?, ?, ?, VEC_FromText(?))',
+    `INSERT INTO pdf_chunk (pdf_id, chunk_text, chunk_order, embedding) VALUES (?, ?, ?, ${VECTOR_VALUE})`,
     [pdfId, chunkText, chunkOrder, JSON.stringify(embedding)]
   );
 }
@@ -29,7 +39,7 @@ async function insertChunk(connection, pdfId, chunkText, chunkOrder, embedding) 
 async function findClosestChunks(embedding, limit = 3) {
   const [rows] = await pool.execute(
     `SELECT chunk_id, pdf_id, chunk_text,
-            VEC_DISTANCE_COSINE(embedding, VEC_FromText(?)) AS distance
+            ${DISTANCE} AS distance
      FROM pdf_chunk
      ORDER BY distance
      LIMIT ${Number(limit)}`,

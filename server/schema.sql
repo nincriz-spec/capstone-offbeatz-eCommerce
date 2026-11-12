@@ -244,3 +244,8 @@ ALTER TABLE product
   ADD COLUMN pdf_id INT UNSIGNED DEFAULT NULL,
   ADD KEY fk_product_pdf (pdf_id),
   ADD CONSTRAINT fk_product_pdf FOREIGN KEY (pdf_id) REFERENCES pdf (pdf_id) ON DELETE SET NULL;
+-- JWT logout: tokens that can no longer be used
+create table token_blacklist(
+    token VARCHAR(512) PRIMARY KEY,
+    expires_at DATETIME
+);
