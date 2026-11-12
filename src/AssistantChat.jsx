@@ -64,7 +64,7 @@ export default function AssistantChat() {
               {m.text}
             </p>
           ))}
-          {loading && <p className="chat-hint">Thinking...</p>}
+          {loading && <p className="chat-hint">Crystallizing...</p>}
         </div>
       </div>
 
