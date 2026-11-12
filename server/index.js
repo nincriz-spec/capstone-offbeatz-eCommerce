@@ -42,9 +42,8 @@ app.use(
 app.use('/api/users/login', loginLimiter);
 
 // Routes
-app.get('/', (req, res) => {
-  res.json({ message: "Welcome to the API" });
-});
+// CHANGED: the old app.get('/') "Welcome to the API" is removed.
+// The shop (React) now answers at '/', see the bottom of this file.
 
 const productsRouter = require('./routes/products');
 const usersRouter = require('./routes/users');
@@ -63,6 +62,15 @@ app.use('/api/assistant', assistantRouter);
 // Admin dashboard (EJS pages)
 const dashboardRouter = require('./routes/dashboard');
 app.use('/dashboard', dashboardRouter);
+
+// CHANGED: serve the built React shop (the "dist" folder from `npm run build`)
+const distPath = path.join(__dirname, '..', 'dist');
+app.use(express.static(distPath));
+
+// Any other address (like /shop or /account) -> give React's page, React decides what to show
+app.get('/{*splat}', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
+});
 
 // Start the server
 const PORT = process.env.PORT || 3000;
