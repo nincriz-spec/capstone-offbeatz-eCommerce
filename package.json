@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:render": "npm install --prefix server && vite build",
+    "start": "node server/index.js",
     "lint": "oxlint",
     "preview": "vite preview"
   },
@@ -29,6 +31,9 @@
   },
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.",
   "main": "vite.config.js",
+  "engines": {
+    "node": "20.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nincriz-spec/capstone-offbeatz-eCommerce.git"
