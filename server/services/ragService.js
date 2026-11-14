@@ -108,9 +108,15 @@ async function ingestPdf(filePath, filename, originalFilename, fileSize, product
   }
 }
 // Answer a question using only the stored PDF chunks.
-async function answerQuestion(question) {
-  const questionNumbers = await generateEmbedding(question);
-  const closest = await ragData.findClosestChunks(questionNumbers, 3);
+// "history" is the last few messages of the chat: [{ from: 'you' | 'assistant', text }]
+async function answerQuestion(question, history = []) {
+  // Search with the customer's last question plus the new one, so a short
+  // follow-up like "and uniforms?" still finds the right chunks
+  const lastQuestion = [...history].reverse().find((m) => m.from === 'you');
+  const searchText = lastQuestion ? lastQuestion.text + ' ' + question : question;
+
+  const questionNumbers = await generateEmbedding(searchText);
+  const closest = await ragData.findClosestChunks(questionNumbers, 5);
 
   if (closest.length === 0) {
     return { answer: 'Sorry, I have no information yet.', sources: [] };
@@ -118,10 +124,18 @@ async function answerQuestion(question) {
 
   const context = closest.map((c) => c.chunk_text).join('\n---\n');
 
+  // The earlier messages help Gemini understand what the new question refers to
+  const conversation = history
+    .map((m) => (m.from === 'you' ? 'Customer: ' : 'Assistant: ') + m.text)
+    .join('\n');
+
   const prompt =
     'You are the Offbeatz shop assistant. Answer the question using ONLY the information below. ' +
     'If the answer is not in the information, say you do not know.\n\n' +
     'INFORMATION:\n' + context + '\n\n' +
+    (conversation
+      ? 'CONVERSATION SO FAR (only to understand what the question refers to):\n' + conversation + '\n\n'
+      : '') +
     'QUESTION: ' + question;
 
   const response = await withRetry(() =>
