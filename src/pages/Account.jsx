@@ -159,9 +159,7 @@ export default function Account() {
                 ))}
               </div>
 
-              <div
-                style={{ display: "flex", gap: "8px", flexWrap: "wrap", margin: "12px 0" }}
-              >
+              <div className="filter-form">
                 <input
                   type="text"
                   placeholder="Search order # or product"
@@ -187,7 +185,7 @@ export default function Account() {
                     onChange={(e) => setToDate(e.target.value)}
                   />
                 </label>
-                <button className="filter-pill" onClick={clearOrderFilters}>
+                <button type="button" className="order-clear" onClick={clearOrderFilters}>
                   Clear
                 </button>
               </div>
