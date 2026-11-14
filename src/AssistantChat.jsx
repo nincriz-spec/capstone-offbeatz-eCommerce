@@ -12,12 +12,15 @@ export default function AssistantChat() {
     const text = question.trim();
     if (!text || loading) return;
 
+    // The conversation so far (before this question): the server uses the last few messages
+    const history = messages.slice(-4);
+
     setMessages((prev) => [...prev, { from: "you", text }]);
     setQuestion("");
     setLoading(true);
 
     try {
-      const res = await axios.post("/api/assistant/chat", { question: text });
+      const res = await axios.post("/api/assistant/chat", { question: text, history });
       setMessages((prev) => [...prev, { from: "assistant", text: res.data.answer }]);
     } catch (err) {
       const message = err.response?.data?.message || "Sorry, something went wrong.";
