@@ -4,6 +4,7 @@ const path = require('path');
 const session = require('express-session');
 require('dotenv').config();
 
+const logger = require('./logger');
 const { loginLimiter } = require('./rateLimiters');
 
 const app = express();
@@ -22,6 +23,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
+
+// Log every API and dashboard request: method, path, status and how long it took.
+// We never log the body or the query, so passwords and tokens stay out of the file.
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    // originalUrl is the full address; we cut off anything after "?" so no query text is logged
+    const fullPath = req.originalUrl.split('?')[0];
+    if (fullPath.startsWith('/api') || fullPath.startsWith('/dashboard')) {
+      const ms = Date.now() - start;
+      const message = `${req.method} ${fullPath} ${res.statusCode} ${ms}ms`;
+      if (res.statusCode >= 500) logger.error(message);
+      else if (res.statusCode >= 400) logger.warn(message);
+      else logger.info(message);
+    }
+  });
+  next();
+});
 
 // Session = the server's memory of who is logged in (used by the dashboard)
 app.use(
@@ -62,7 +81,7 @@ app.use('/api/assistant', assistantRouter);
 const dashboardRouter = require('./routes/dashboard');
 app.use('/dashboard', dashboardRouter);
 
-// CHANGED: serve the built React shop (the "dist" folder from `npm run build`)
+// Serve the built React shop (the "dist" folder from `npm run build`)
 const distPath = path.join(__dirname, '..', 'dist');
 app.use(express.static(distPath));
 
@@ -71,8 +90,24 @@ app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
+// Last stop for errors: write them to the log and send a safe message
+// (it must have 4 parameters, that is how Express knows it is an error handler)
+app.use((err, req, res, next) => {
+  logger.error(`${req.method} ${req.originalUrl.split('?')[0]} - ${err.message}`);
+  res.status(500).json({ error: 'Something went wrong' });
+});
+
+// Errors that nobody caught: log them instead of failing silently
+process.on('unhandledRejection', (reason) => {
+  logger.error(`Unhandled rejection: ${reason}`);
+});
+process.on('uncaughtException', (err) => {
+  logger.error(`Uncaught exception: ${err.stack}`);
+  process.exit(1);
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  logger.info(`Server is running on port ${PORT}`);
 });
