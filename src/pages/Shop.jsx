@@ -97,10 +97,7 @@ export default function Shop() {
         ))}
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", gap: "8px", flexWrap: "wrap", margin: "16px 0" }}
-      >
+      <form onSubmit={handleSubmit} className="filter-form">
         <input
           type="text"
           name="search"
@@ -139,7 +136,7 @@ export default function Shop() {
           value={form.maxPrice || ""}
           onChange={handleChange}
         />
-        <button type="submit">Apply</button>
+        <button type="submit" className="filter-apply">Apply</button>
         <Link href="/shop" className="filter-pill">Clear</Link>
       </form>
 

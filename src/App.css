@@ -672,3 +672,60 @@ html { scroll-behavior: smooth; }
   width: 100%;
   margin-bottom: 8px;
 }
+/* Shop filter bar */
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 20px 0 28px;
+  color-scheme: dark;
+}
+
+.filter-form input,
+.filter-form select {
+  background: #161211;
+  color: #f5f0ee;
+  border: 1px solid #3a302d;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.filter-form input::placeholder {
+  color: #8d817c;
+}
+
+.filter-form input:focus,
+.filter-form select:focus {
+  outline: none;
+  border-color: #e8683a;
+}
+
+.filter-form input[type="text"] {
+  flex: 1 1 220px;
+}
+
+.filter-form input[type="number"] {
+  flex: 1 1 110px;
+  max-width: 160px;
+}
+
+.filter-apply {
+  background: linear-gradient(135deg, #ee6a35, #d0403a);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 24px;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.filter-apply:hover {
+  filter: brightness(1.1);
+}
