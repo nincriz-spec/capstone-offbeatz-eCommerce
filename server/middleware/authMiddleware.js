@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const tokenData = require('../data/tokenData');
+const logger = require('../logger');
 
 async function authenticate(req, res, next) {
     const header = req.headers.authorization;
@@ -29,7 +30,7 @@ async function authenticate(req, res, next) {
             return res.status(401).json({ message: 'Token has been logged out' });
         }
     } catch (error) {
-        console.error('blacklist check error:', error);
+        logger.error(`blacklist check failed: ${error.message}`);
         return res.status(500).json({ message: 'Server error' });
     }
 

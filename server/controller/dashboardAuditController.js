@@ -1,4 +1,5 @@
 const auditService = require('../services/auditService');
+const logger = require('../logger');
 
 async function showAudit(req, res) {
   try {
@@ -16,7 +17,7 @@ async function showAudit(req, res) {
       values,
     });
   } catch (err) {
-    console.error(err);
+    logger.error(`dashboard showAudit failed: ${err.message}`);
     res.status(500).send('Could not load the audit trail');
   }
 }

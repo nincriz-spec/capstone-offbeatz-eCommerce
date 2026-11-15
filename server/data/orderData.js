@@ -50,10 +50,16 @@ async function createOrder(customerId, address, total, lines) {
                 'INSERT INTO order_item (order_id, variant_id, quantity, unit_price) VALUES (?, ?, ?, ?)',
                 [orderId, line.variantId, line.quantity, line.unitPrice]
             );
-            await connection.execute(
-                'UPDATE variant SET stock_qty = stock_qty - ? WHERE variant_id = ?',
-                [line.quantity, line.variantId]
+
+            // Take the stock only if there is enough left. The check and the subtraction
+            // happen in one step, so two customers cannot both take the last item.
+            const [stockResult] = await connection.execute(
+                'UPDATE variant SET stock_qty = stock_qty - ? WHERE variant_id = ? AND stock_qty >= ?',
+                [line.quantity, line.variantId, line.quantity]
             );
+            if (stockResult.affectedRows === 0) {
+                throw new Error('Not enough stock');
+            }
         }
 
         await connection.execute(

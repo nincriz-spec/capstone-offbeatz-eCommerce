@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userService = require('../services/userService');
 const adminService = require('../services/adminService');
+const logger = require('../logger');
 
 function showLogin(req, res) {
   if (req.session.admin) {
@@ -27,7 +28,7 @@ async function login(req, res) {
     // New session id on login (session security)
     req.session.regenerate((err) => {
       if (err) {
-        console.error(err);
+        logger.error(`admin session regenerate failed: ${err.message}`);
         return res.status(500).render('dashboard/login', {
           title: 'Admin Login',
           error: 'Something went wrong. Please try again.',
@@ -88,7 +89,7 @@ async function showOrders(req, res) {
       flash,
     });
   } catch (err) {
-    console.error(err);
+    logger.error(`dashboard showOrders failed: ${err.message}`);
     res.status(500).send('Could not load orders');
   }
 }
@@ -107,7 +108,6 @@ async function changeOrderStatus(req, res) {
     req.session.flash = { type: 'danger', text: err.message };
   }
 
-  // Redirect after saving, like the teacher's sample
   res.redirect('/dashboard/orders');
 }
 

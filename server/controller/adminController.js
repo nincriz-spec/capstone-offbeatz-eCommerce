@@ -1,11 +1,12 @@
 const adminService = require('../services/adminService');
+const logger = require('../logger');
 
 async function getAllOrders(req, res) {
     try {
         const orders = await adminService.getAllOrders();
         res.json(orders);
     } catch (err) {
-        console.error(err);
+        logger.error(`admin getAllOrders failed: ${err.message}`);
         res.status(500).json({ message: 'Could not load orders' });
     }
 }

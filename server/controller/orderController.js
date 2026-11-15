@@ -1,4 +1,5 @@
 const orderService = require('../services/orderService');
+const logger = require('../logger');
 
 async function createOrder(req, res) {
     try {
@@ -9,7 +10,7 @@ async function createOrder(req, res) {
         );
         res.status(201).json({ message: 'Order created', ...result });
     } catch (err) {
-        console.error(err);
+        logger.warn(`createOrder failed: ${err.message}`);
         res.status(400).json({ error: err.message });
     }
 }
@@ -19,7 +20,7 @@ async function getOrders(req, res) {
         const orders = await orderService.getOrders(req.user.customerId);
         res.json(orders);
     } catch (err) {
-        console.error(err);
+        logger.error(`getOrders failed: ${err.message}`);
         res.status(500).json({ error: 'Could not load orders' });
     }
 }

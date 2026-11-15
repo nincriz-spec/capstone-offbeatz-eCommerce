@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const productAdminService = require('../services/productAdminService');
 const ragService = require('../services/ragService');
+const logger = require('../logger');
 
 // Same folder the old React admin upload used: server/uploads
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
@@ -43,7 +44,7 @@ async function renderForm(req, res, options) {
       error: options.error || null,
     });
   } catch (err) {
-    console.error(err);
+    logger.error(`dashboard renderForm failed: ${err.message}`);
     res.status(500).send('Could not load the form');
   }
 }
@@ -58,7 +59,7 @@ async function showProducts(req, res) {
       flash: takeFlash(req),
     });
   } catch (err) {
-    console.error(err);
+    logger.error(`dashboard showProducts failed: ${err.message}`);
     res.status(500).send('Could not load products');
   }
 }
@@ -176,7 +177,7 @@ async function uploadPdf(req, res) {
 
     req.session.flash = { type: 'success', text: 'PDF uploaded for product #' + productId + '. The assistant can use it now.' };
   } catch (err) {
-    console.error(err);
+    logger.error(`dashboard uploadPdf failed: ${err.message}`);
     req.session.flash = { type: 'danger', text: 'Could not process the PDF. Please try again.' };
   }
 

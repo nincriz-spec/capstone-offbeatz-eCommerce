@@ -1,9 +1,12 @@
 const userAdminService = require('../services/userAdminService');
+const logger = require('../logger');
 
 async function showUsers(req, res) {
     try {
         const rows = await userAdminService.getUsers(req.query);
         res.render('dashboard/users', {
+            title: 'Users',
+            admin: req.session.admin,
             rows,
             values: {
                 search: req.query.search || '',
@@ -11,7 +14,7 @@ async function showUsers(req, res) {
             }
         });
     } catch (err) {
-        console.error('showUsers error:', err);
+        logger.error(`dashboard showUsers failed: ${err.message}`);
         res.status(500).send('Could not load users');
     }
 }

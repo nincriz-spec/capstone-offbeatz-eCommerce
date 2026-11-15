@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const logger = require('../logger');
 
 async function register(req, res) {
     try {
@@ -34,7 +35,7 @@ async function getAddresses(req, res) {
         const addresses = await userService.getAddresses(req.user.customerId);
         res.json(addresses);
     } catch (err) {
-        console.error(err);
+        logger.error(`getAddresses failed: ${err.message}`);
         res.status(500).json({ message: 'Could not load addresses' });
     }
 }

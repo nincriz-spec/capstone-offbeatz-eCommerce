@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const ragService = require('../services/ragService');
+const logger = require('../logger');
 
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
 
@@ -41,7 +42,7 @@ async function uploadPdf(req, res) {
 
     res.status(201).json({ message: 'PDF uploaded', ...result });
   } catch (error) {
-    console.error(error);
+    logger.error(`PDF upload failed: ${error.message}`);
     res.status(500).json({ message: 'Could not process the PDF' });
   }
 }

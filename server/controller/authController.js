@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const logger = require('../logger');
 
 // POST /api/users/refresh   body: { "refreshToken": "..." }
 async function refresh(req, res) {
@@ -19,7 +20,7 @@ async function logout(req, res) {
         await userService.logoutUser(accessToken, refreshToken);
         res.json({ message: 'Logged out' });
     } catch (err) {
-        console.error('logout error:', err);
+        logger.error(`logout failed: ${err.message}`);
         res.status(500).json({ message: 'Could not log out' });
     }
 }
