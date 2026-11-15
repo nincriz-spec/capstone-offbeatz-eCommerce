@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useCart } from "../ShopCart";
+import { useAuth } from "../AuthStore";
 import axios from "axios";
 
 export default function Checkout() {
   const { cart, getCartTotal, clearCart } = useCart();
+  const { token } = useAuth();
 
   const [street, setStreet] = useState("");
   const [block, setBlock] = useState("");
@@ -25,9 +27,8 @@ export default function Checkout() {
     setChoice(String(a.address_id));
   }
 
-  // load the customer's saved addresses once
+  // load the customer's saved addresses (again if the token changes)
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) return;
 
     axios
@@ -39,7 +40,7 @@ export default function Checkout() {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [token]);
 
   function handleChoose(e) {
     const value = e.target.value;
@@ -63,7 +64,6 @@ export default function Checkout() {
       return;
     }
 
-    const token = localStorage.getItem("token");
     if (!token) {
       setError("Please log in before placing an order.");
       return;
@@ -102,7 +102,7 @@ export default function Checkout() {
     return (
       <section className="page">
         <h2>Thank you for shopping</h2>
-        <p>Your purchased is confirmed.</p>
+        <p>Your purchase is confirmed.</p>
         <Link href="/shop" className="btn">Back to shop</Link>
       </section>
     );

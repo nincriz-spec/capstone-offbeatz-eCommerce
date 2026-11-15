@@ -38,6 +38,9 @@ export default function ProductDetail() {
     (v) => v.color === color && v.size === size
   );
 
+  // Use the variant's own price if it has one, otherwise the product price
+  const shownPrice = selected && selected.price != null ? selected.price : product.price;
+
   let stockMessage;
   if (!selected) {
     stockMessage = "stock unavailable";
@@ -53,7 +56,7 @@ export default function ProductDetail() {
     addToCart({
       variantId: selected.id,
       name: product.name,
-      price: product.price,
+      price: shownPrice,
       color: selected.color,
       size: selected.size,
       image: image.url,
@@ -68,7 +71,7 @@ export default function ProductDetail() {
 
         <div className="detail-info">
           <h2>{product.name}</h2>
-          <p className="price">${product.price}</p>
+          <p className="price">${shownPrice}</p>
 
           <h4>Color</h4>
           <div className="option-row">
