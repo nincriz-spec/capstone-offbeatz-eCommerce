@@ -29,3 +29,6 @@ sql.sh
 
 # Uploaded PDFs
 server/uploads/
+
+# Test coverage report
+coverage
