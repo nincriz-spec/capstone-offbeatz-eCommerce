@@ -13,9 +13,10 @@ async function refresh(req, res) {
 }
 
 // POST /api/users/logout   header: Bearer <access token>, body: { "refreshToken": "..." }
+// Works even if the access token has expired: expired or fake tokens are simply skipped
 async function logout(req, res) {
     try {
-        const accessToken = req.headers.authorization.split(' ')[1];
+        const accessToken = (req.headers.authorization || '').split(' ')[1];
         const refreshToken = req.body && req.body.refreshToken;
         await userService.logoutUser(accessToken, refreshToken);
         res.json({ message: 'Logged out' });

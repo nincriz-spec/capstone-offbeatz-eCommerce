@@ -8,7 +8,9 @@ router.post('/register', userController.register);
 
 router.post('/login', userController.login);
 router.post('/refresh', authController.refresh);
-router.post('/logout', authenticate, authController.logout);
+// No authenticate here: logout must also work when the access token has expired,
+// so the refresh token still gets blacklisted
+router.post('/logout', authController.logout);
 
 router.get('/me', authenticate, userController.getProfile);
 router.put('/me', authenticate, userController.updateProfile);
