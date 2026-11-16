@@ -13,6 +13,7 @@
 - Let customers browse and filter products, keep a shopping bag, register, and order.
 - Let the shop admin manage orders, users and products from a separate dashboard.
 - Let customers ask questions about the shop (shipping, sizes, uniforms) and get answers taken from the shop's own documents (AI assistant).
+- Give the admin an AI assistant (an n8n agent) that answers questions about the live orders and the stock.
 
 Built for the ROCKET Academy capstone project.
 
@@ -30,6 +31,7 @@ Built for the ROCKET Academy capstone project.
 | 6 | As a customer, I want to see and cancel my orders | My account shows my orders with status, items and total. I can filter by status, text and date. A pending order has a Cancel button |
 | 7 | As a customer, I want to ask the shop assistant a question | The chat answers using the shop documents and says it does not know when the answer is not there |
 | 8 | As an admin, I want to manage orders and products | The dashboard needs an admin login. I can filter orders, change a status (only allowed steps), see the audit trail, list users, and add or edit products |
+| 9 | As an admin, I want to ask an AI assistant about orders and stock, so I save time | In the n8n chat I can ask "Which orders are pending?" or "Which items are low in stock?" and the answer uses the live shop data. The assistant can only read data, it cannot change anything |
 
 ### Wireframes and screens
 
@@ -49,7 +51,7 @@ The live site is the mock-up. Layout of each screen:
 | Plane | OFFBEATZ |
 |---|---|
 | **Strategy** | Why: sell streetwear and custom uniforms online, and give the owners one place to run the shop. Users: young customers and teams who want uniforms |
-| **Scope** | What it must do: browse and filter, bag, accounts, checkout, order history, admin order and product management, a shop assistant. Not in scope for now: online payment |
+| **Scope** | What it must do: browse and filter, bag, accounts, checkout, order history, admin order and product management, a shop assistant for customers and an AI assistant for the admin |
 | **Structure** | How it is organized: Home leads to Shop, then Product, then Bag, then Checkout. My account holds profile, orders and addresses. The admin has a separate dashboard behind a login |
 | **Skeleton** | The layout of each screen: the same header and footer, clear buttons for the main actions, filters above the product grid, form errors shown under the form, short messages for success and errors |
 | **Surface** | The look: a dark background with orange accents, bold uppercase headings, large campaign photos, and the OFFBEATZ logo in italic. The layout adapts to mobile, tablet and desktop |
@@ -71,6 +73,12 @@ The live site is the mock-up. Layout of each screen:
 - Users list with search and role filter
 - Products: add, edit, show or hide, and upload a PDF for the AI assistant
 
+**Admin AI assistant (n8n, runs separately from the dashboard)**
+- The admin asks questions in a chat, such as "Which orders are pending?", "What should I ship today?" or "Which items are low in stock?"
+- The answers come from the live orders and products of the shop
+- It remembers the last few messages of the chat
+- It is read-only: it can look at orders and products but cannot change them
+
 ### Algorithms and techniques used
 
 | What | How it works |
@@ -82,9 +90,11 @@ The live site is the mock-up. Layout of each screen:
 | Filters | Incoming filters are checked against a whitelist, and all SQL uses `?` placeholders |
 | Status rules | An order can only move to the allowed next status (for example, a cancelled order cannot move again) |
 | AI assistant (RAG) | A PDF is cut into pieces of about 1000 characters with 200 overlap. Each piece is turned into numbers with Gemini embeddings and stored. A question is turned into numbers too, and the 5 closest pieces by cosine distance are sent to Gemini with the instruction to answer only from them |
+| Admin AI assistant (n8n agent) | A workflow in n8n. A chat message goes to a Login step that gets an admin token from the shop. Then a Gemini agent with two read-only tools (`get_orders` and `get_products`) calls the shop's own API with that token and writes the answer. The shop checks the token and the admin role, like for the dashboard |
 
 ### Known limitations and bugs
 - Render's free plan sleeps when idle (about 50 seconds to wake up).
+- The admin AI assistant runs in n8n on a computer, it is not hosted online. It is read-only. Its first question can fail while Render wakes up. Each question logs in once, and the login limit is 10 per 15 minutes, so only about 10 questions fit in 15 minutes.
 - Admin sessions are kept in memory, so the admin must log in again after a restart.
 - Uploaded PDF files and `logs/app.log` are stored on the server's disk and are lost on a restart. The text pieces used by the AI stay in the database.
 - TiDB Cloud has no vector index here, so the AI search compares all pieces (fine for a small shop).
@@ -92,8 +102,6 @@ The live site is the mock-up. Layout of each screen:
 - There is no forgot-password feature.
 
 ### Pending features
-- Online payment with Stripe. It is optional in the project brief. For now an admin marks an order as paid in the dashboard.
-- An AI assistant for the admin (agent with n8n).
 - Wishlist, discount codes and invoice PDFs.
 
 ## 4. Use cases
@@ -103,6 +111,7 @@ The live site is the mock-up. Layout of each screen:
 | Buy an item | A customer orders a product | 1. Open the shop and filter. 2. Open a product and choose color and size. 3. Add to bag. 4. Open the bag, then Checkout. 5. Log in if asked. 6. Choose or enter an address. 7. Place the order |
 | Track and cancel an order | A customer checks an order | 1. Log in. 2. Open My account, then My orders. 3. Filter by status, text or date. 4. Cancel a pending order |
 | Ask the assistant | A customer gets an answer about the shop | 1. Open the chat. 2. Type a question. 3. Read the answer. 4. Ask a short follow-up |
+| Ask the admin assistant | The admin gets a quick answer about orders or stock | 1. Open the shop site so it is awake. 2. Start n8n (`npx n8n`) and open the workflow. 3. Type a question, for example "Which orders are pending?". 4. Read the answer |
 | Process an order | The admin moves an order forward | 1. Open `/dashboard/login` and log in. 2. Open Orders and filter. 3. Change the status. 4. Check the change in Audit |
 | Add a product | The admin adds a product | 1. Log in to the dashboard. 2. Open Products, then New. 3. Fill the form and save. 4. Check it in the shop |
 
@@ -114,10 +123,11 @@ The live site is the mock-up. Layout of each screen:
 | Frontend | React 19, Vite, Wouter (routes), Jotai (shared state), axios, Formik and Yup |
 | Backend | Express 5, in layers: routes, controller, services, data. `mysql2`, `bcrypt`, `jsonwebtoken`, `express-session`, `express-rate-limit`, `express-fileupload`, `ejs`, `pdf-parse`, `cors`, `dotenv` |
 | Database | MariaDB locally, TiDB Cloud when deployed |
-| AI | Google Gemini (`@google/genai`): the `gemini-2.5-flash` model by default and `gemini-embedding-001` for embeddings |
+| AI | Google Gemini (`@google/genai`): the `gemini-2.5-flash` model by default and `gemini-embedding-001` for embeddings. The admin assistant also uses a Gemini chat model |
+| AI agent | n8n (workflow tool, run on a computer with `npx n8n`): a chat trigger, an HTTP Request login step, an AI Agent node with a Gemini chat model, simple memory and two HTTP Request tools |
 | Logging | `server/logger.js` writes to the console and to `server/logs/app.log` |
 | Tests | Jest |
-| Tools | GitHub, GitHub Codespaces, Render, TiDB Cloud, oxlint |
+| Tools | GitHub, GitHub Codespaces, Render, TiDB Cloud, n8n, oxlint |
 
 **Repository:** https://github.com/nincriz-spec/capstone-offbeatz-eCommerce
 
@@ -152,7 +162,7 @@ npm test
 npm run test:coverage
 ```
 
-20 tests pass in 2 files: `productService` (filters and result) and `orderService` (cart, address, quantity, real price, stock). Both files have 100% statement, branch, function and line coverage.
+20 tests pass in 2 files: `productService` (filters and result) and `orderService` (cart, address, quantity, real price, stock). Both files have 100% statement, branch, function and line coverage. The n8n assistant is tested by hand (tests 16 to 18).
 
 ### Manual test cases
 
@@ -173,6 +183,9 @@ npm run test:coverage
 | 13 | Dashboard pages | Click Orders, Audit, Users, Products | Each page loads with the menu | Pass |
 | 14 | AI assistant | Ask about shipping or sizes | An answer from the shop documents | Pass |
 | 15 | Console check | Open the browser console while using the shop | No red errors | Pass |
+| 16 | Admin AI: pending orders | Start n8n and ask "Which orders are pending?" | A short answer that lists the real pending orders of the shop | Pass |
+| 17 | Admin AI: low stock | Ask "Which items are low in stock?" | A short answer that lists products with stock of 5 or less | Pass |
+| 18 | Admin AI: what to ship | Ask "What should I ship today?" | An answer based on the real orders | Pass |
 
 Unhandled exceptions and console errors are treated as failed tests. The server also writes every request and every error to `server/logs/app.log`.
 
@@ -209,6 +222,16 @@ You need Node.js 20 and a MariaDB or MySQL database. (The `.devcontainer` folder
 
 An admin is a user whose role is `admin` in the `customer` table. Create or change it with SQL. No admin password is stored in this repository.
 
+### Run the admin AI assistant (n8n)
+
+n8n is not part of the Render deployment. It runs on the owner's computer and calls the live shop over the internet.
+
+1. Open the shop site in a browser so Render is awake.
+2. In a terminal run `npx n8n` and keep the window open. Open http://localhost:5678.
+3. The workflow "Offbeatz Op Assistant" has this chain: **When chat message received**, then **Login** (an HTTP Request that logs in to the shop as admin), then **Op Assistant** (an AI Agent). The agent has a **Google Gemini Chat Model**, **Simple Memory** and two tools: **get_orders** (`GET /api/admin/orders`, sends the token in the `Authorization` header) and **get_products** (`GET /api/products`).
+4. The Gemini key is saved as an n8n credential. The admin login is typed inside the Login node. Neither is in this repository.
+5. Type a question in the chat and read the answer.
+
 ### Environment variables
 
 These are only the **names**. Their values are secret and are never in this repository.
@@ -230,11 +253,14 @@ These are only the **names**. Their values are secret and are never in this repo
 ### Security notes
 - Secrets live only in `.env` and in Render's settings. `.env` and `sql.sh` are in `.gitignore`.
 - The dashboard uses a session cookie (`httpOnly`, `sameSite`, `secure` in production), a CSRF token on every form that changes data, and a limit of 10 login tries in 15 minutes. The shop login has the same limit.
+- The Gemini key and the admin login of the n8n assistant live only inside n8n on the owner's computer. An exported n8n workflow would contain the admin login, so it is never committed.
+- The AI assistants only read data. The admin assistant gets its data through the same protected API routes as the dashboard.
 
 ## 8. Credits
 
 - **Libraries:** React, Vite, Wouter, Jotai, axios, Formik, Yup, Express, mysql2, bcrypt, jsonwebtoken, express-session, express-rate-limit, express-fileupload, EJS, pdf-parse, cors, dotenv, Jest, oxlint. Each one is used under its own open-source licence.
 - **AI:** Google Gemini API (answers and embeddings).
+- **Automation:** n8n, used to build the admin AI assistant.
 - **Services:** Render (hosting) and TiDB Cloud (database).
 - **Images:** All product, campaign and category photos belong to OFFBEATZ and were taken by me.
 - **Learning material:** Notes and lessons from ROCKET Academy.
