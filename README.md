@@ -244,7 +244,7 @@ These are only the **names**. Their values are secret and are never in this repo
 | `JWT_SECRET` | signs the login tokens |
 | `SESSION_SECRET` | signs the admin dashboard session |
 | `GEMINI_API_KEY` | key for the AI assistant |
-| `GEMINI_MODEL` | optional, default is `gemini-2.5-flash` |
+| `GEMINI_MODEL` | optional, default is `gemini-3.5-flash` |
 | `PORT` | optional, default is 3000 |
 | `NODE_ENV` | `production` when deployed |
 
