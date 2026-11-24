@@ -1,5 +1,4 @@
-// Tests for services/orderService.js
-// The data layer is replaced with fake functions, so no real database is used.
+
 jest.mock('../data/orderData', () => ({
   getVariantById: jest.fn(),
   createOrder: jest.fn(),
@@ -15,7 +14,7 @@ const goodAddress = { street: '1 Main St', block: '12B', city: 'Manila', postalC
 
 beforeEach(() => {
   jest.clearAllMocks();
-  // variant 5 costs 25 and has 10 in stock
+
   orderData.getVariantById.mockResolvedValue({ variant_id: 5, price: '25.00', stock_qty: 10 });
   orderData.createOrder.mockResolvedValue(99);
 });

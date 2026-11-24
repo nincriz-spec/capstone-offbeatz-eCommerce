@@ -1,9 +1,8 @@
 const pool = require('../database');
 
-// filters is optional: { search, role }
-// The password column is NEVER selected.
+
 async function getAllUsers(filters = {}) {
-    // Query builder: start with WHERE 1, add AND ... only for filters that were used
+   
     let sql = `SELECT c.customer_id, c.name, c.email, c.phone, c.role, c.created_at,
                       COUNT(o.order_id) AS order_count
                FROM customer c

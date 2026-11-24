@@ -1,7 +1,7 @@
 const userService = require('../services/userService');
 const logger = require('../logger');
 
-// POST /api/users/refresh   body: { "refreshToken": "..." }
+
 async function refresh(req, res) {
     try {
         const refreshToken = req.body && req.body.refreshToken;
@@ -12,8 +12,7 @@ async function refresh(req, res) {
     }
 }
 
-// POST /api/users/logout   header: Bearer <access token>, body: { "refreshToken": "..." }
-// Works even if the access token has expired: expired or fake tokens are simply skipped
+
 async function logout(req, res) {
     try {
         const accessToken = (req.headers.authorization || '').split(' ')[1];

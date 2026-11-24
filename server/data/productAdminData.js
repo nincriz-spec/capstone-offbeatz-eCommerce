@@ -26,7 +26,6 @@ async function getAllCategories() {
     return rows;
 }
 
-// New products start hidden (is_active = 0) until they have sizes and stock
 async function createProduct(p) {
     const [result] = await pool.execute(
         `INSERT INTO product

@@ -6,7 +6,7 @@ const emptyForm = { street: "", block: "", city: "", postal_code: "" };
 
 export default function AddressesTab({ addresses, token, onChanged }) {
   const { showMessage } = useFlash();
-  const [editingId, setEditingId] = useState(null); // null = list, "new" = adding, number = editing
+  const [editingId, setEditingId] = useState(null); 
   const [form, setForm] = useState(emptyForm);
   const headers = { Authorization: `Bearer ${token}` };
 

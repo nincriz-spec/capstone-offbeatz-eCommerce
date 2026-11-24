@@ -6,7 +6,7 @@ const tokenData = require('../data/tokenData');
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phonePattern = /^[0-9+ ]{7,15}$/;
 
-// How long each pass lasts. Easy to change in one place.
+
 const ACCESS_EXPIRES = '15m';
 const REFRESH_EXPIRES = '7d';
 
@@ -56,7 +56,6 @@ async function loginUser(email, password) {
         { expiresIn: ACCESS_EXPIRES }
     );
 
-    // type: 'refresh' lets us tell this pass apart from an access token
     const refreshToken = jwt.sign(
         { customerId: user.customer_id, role: user.role, type: 'refresh' },
         process.env.JWT_SECRET,
@@ -66,7 +65,6 @@ async function loginUser(email, password) {
     return { token, refreshToken };
 }
 
-// Trade a valid refresh token for a new access token
 async function refreshAccessToken(refreshToken) {
     if (!refreshToken) {
         throw new Error('Refresh token required');
@@ -95,7 +93,7 @@ async function refreshAccessToken(refreshToken) {
     return { token };
 }
 
-// Put one token on the blacklist (ignores tokens that are already invalid)
+
 async function blacklistToken(token) {
     if (!token) {
         return;
@@ -104,11 +102,11 @@ async function blacklistToken(token) {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         await tokenData.addToBlacklist(token, new Date(payload.exp * 1000));
     } catch (err) {
-        // expired or fake token: nothing to blacklist
+        
     }
 }
 
-// Logout: kill the access token and the refresh token
+
 async function logoutUser(accessToken, refreshToken) {
     await blacklistToken(accessToken);
     await blacklistToken(refreshToken);

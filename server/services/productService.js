@@ -3,7 +3,7 @@ const productData = require('../data/productData');
 const FITS = ['oversized', 'boxy', 'regular', 'slim'];
 const GENDERS = ['men', 'women', 'unisex'];
 
-// A price must be a normal number between 0 and 100000, otherwise ignore it
+
 function cleanPrice(value) {
     if (value === undefined || value === '') {
         return undefined;
@@ -15,7 +15,7 @@ function cleanPrice(value) {
     return n;
 }
 
-// Keep only filters that are safe and valid
+
 function cleanFilters(query = {}) {
     const filters = {};
 

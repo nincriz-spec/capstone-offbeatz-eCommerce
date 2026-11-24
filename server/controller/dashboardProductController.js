@@ -4,7 +4,7 @@ const productAdminService = require('../services/productAdminService');
 const ragService = require('../services/ragService');
 const logger = require('../logger');
 
-// Same folder the old React admin upload used: server/uploads
+
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
 
 const emptyProduct = {
@@ -20,14 +20,14 @@ const emptyProduct = {
   category_id: '',
 };
 
-// Read the one-time message and forget it
+
 function takeFlash(req) {
   const flash = req.session.flash || null;
   delete req.session.flash;
   return flash;
 }
 
-// Shows the add/edit form (used by several functions below)
+
 async function renderForm(req, res, options) {
   try {
     const categories = await productAdminService.getCategories();
@@ -78,7 +78,7 @@ async function createProduct(req, res) {
     req.session.flash = { type: 'success', text: 'Product added. It is hidden until you show it.' };
     res.redirect('/dashboard/products');
   } catch (err) {
-    // Show the form again with what the admin typed and the error message
+
     return renderForm(req, res, {
       status: 400,
       heading: 'Add product',
@@ -138,7 +138,7 @@ async function toggleActive(req, res) {
   res.redirect('/dashboard/products');
 }
 
-// Returns a message if the file is not OK, or null if it is fine
+
 function checkPdfFile(file) {
   if (!file) {
     return 'Please choose a PDF file';
@@ -156,7 +156,7 @@ async function uploadPdf(req, res) {
   const productId = Number(req.params.id);
 
   try {
-    // Make sure the product exists (throws if not)
+
     await productAdminService.getProduct(productId);
 
     const file = req.files && req.files.pdf;
@@ -166,13 +166,13 @@ async function uploadPdf(req, res) {
       return res.redirect('/dashboard/products');
     }
 
-    // Save with a safe name we choose ourselves, never the name the user sent
+  
     fs.mkdirSync(UPLOAD_DIR, { recursive: true });
     const savedName = Date.now() + '.pdf';
     const savedPath = path.join(UPLOAD_DIR, savedName);
     await file.mv(savedPath);
 
-    // Same RAG code as before: chunk, embed, store
+   
     await ragService.ingestPdf(savedPath, savedName, file.name, file.size, productId);
 
     req.session.flash = { type: 'success', text: 'PDF uploaded for product #' + productId + '. The assistant can use it now.' };

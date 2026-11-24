@@ -83,13 +83,12 @@ export default function Account() {
   const hasOrderFilters =
     orderTab !== "all" || searchText !== "" || fromDate !== "" || toDate !== "";
 
-  // An order stays in the list only if it passes every filter
   const visibleOrders = orders.filter((o) => {
-    // 1. status tab
+
     if (orderTab !== "all" && !currentTab.statuses.includes(o.status)) {
       return false;
     }
-    // 2. search: order number or a product name
+   
     if (searchText) {
       const inNumber = String(o.order_id).includes(searchText);
       const inItems = o.items.some((item) =>
@@ -99,7 +98,7 @@ export default function Account() {
         return false;
       }
     }
-    // 3. date range (whole days)
+  
     const created = new Date(o.created_at);
     if (fromDate && created < new Date(fromDate + "T00:00:00")) {
       return false;
@@ -113,7 +112,6 @@ export default function Account() {
   return (
     <section className="page">
       <h2>My account</h2>
-
       <div className="account-layout">
         <nav className="account-menu">
           <button

@@ -7,7 +7,7 @@ const pool = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    // Hosted databases need a secure (TLS) connection. Locally this stays off.
+   
     ssl: process.env.DB_SSL === 'true'
         ? { minVersion: 'TLSv1.2', rejectUnauthorized: true }
         : undefined,

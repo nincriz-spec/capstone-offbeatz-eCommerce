@@ -18,7 +18,7 @@ export default function Checkout() {
   const [placed, setPlaced] = useState(false);
   const [sending, setSending] = useState(false);
 
-  // copy a saved address into the 4 fields
+  
   function fillFrom(a) {
     setStreet(a.street);
     setBlock(a.block);
@@ -27,7 +27,7 @@ export default function Checkout() {
     setChoice(String(a.address_id));
   }
 
-  // load the customer's saved addresses (again if the token changes)
+
   useEffect(() => {
     if (!token) return;
 

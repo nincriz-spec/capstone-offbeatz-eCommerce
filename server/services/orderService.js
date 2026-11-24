@@ -9,7 +9,6 @@ async function createOrder(customerId, items, address) {
         throw new Error('Please enter a full address');
     }
 
-    // check every quantity, and add up lines that repeat the same variant
     const quantities = {};
     for (const item of items) {
         const quantity = Number(item.quantity);

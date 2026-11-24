@@ -12,7 +12,7 @@ export default function AssistantChat() {
     const text = question.trim();
     if (!text || loading) return;
 
-    // The conversation so far (before this question): the server uses the last few messages
+  
     const history = messages.slice(-4);
 
     setMessages((prev) => [...prev, { from: "you", text }]);
@@ -67,7 +67,7 @@ export default function AssistantChat() {
               {m.text}
             </p>
           ))}
-          {loading && <p className="chat-hint">Crystallizing...</p>}
+          {loading && <p className="chat-hint">Thinking...</p>}
         </div>
       </div>
 

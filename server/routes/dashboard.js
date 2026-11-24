@@ -8,7 +8,7 @@ const productController = require('../controller/dashboardProductController');
 const auditController = require('../controller/dashboardAuditController');
 const { dashboardLoginLimiter } = require('../rateLimiters');
 
-// Makes a secret token for this session and shares it with every page
+
 function csrfSetup(req, res, next) {
   if (!req.session.csrfToken) {
     req.session.csrfToken = crypto.randomBytes(32).toString('hex');
@@ -17,7 +17,7 @@ function csrfSetup(req, res, next) {
   next();
 }
 
-// On every POST, the token in the form must match the one in the session
+
 function csrfCheck(req, res, next) {
   const sent = String((req.body && req.body._csrf) || '');
   const real = req.session.csrfToken || '';
@@ -28,7 +28,7 @@ function csrfCheck(req, res, next) {
   next();
 }
 
-// Only let someone in if the session says they are an admin
+
 function requireAdminSession(req, res, next) {
   if (!req.session.admin) {
     return res.redirect('/dashboard/login');
@@ -56,8 +56,7 @@ router.get('/products/:id/edit', requireAdminSession, productController.showEdit
 router.post('/products/:id', requireAdminSession, csrfCheck, productController.updateProduct);
 router.post('/products/:id/active', requireAdminSession, csrfCheck, productController.toggleActive);
 
-// File upload: only admins, max 5 MB. fileUpload runs BEFORE csrfCheck
-// because it is what reads the form (including the hidden _csrf field).
+
 router.post(
   '/products/:id/pdf',
   requireAdminSession,

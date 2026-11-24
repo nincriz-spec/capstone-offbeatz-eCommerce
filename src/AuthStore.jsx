@@ -3,15 +3,14 @@ import { atom, useAtom, getDefaultStore } from "jotai";
 
 const tokenAtom = atom(localStorage.getItem("token"));
 
-// Forget the login in the browser (storage and memory)
+
 function clearLogin() {
   localStorage.removeItem("token");
   localStorage.removeItem("refreshToken");
   getDefaultStore().set(tokenAtom, null);
 }
 
-// Trade the refresh token for a new access token.
-// If several requests fail at once, they all share ONE refresh call.
+
 let refreshPromise = null;
 
 function refreshAccessToken() {
@@ -32,7 +31,7 @@ function refreshAccessToken() {
   return refreshPromise;
 }
 
-// Runs on every response. On a 401 it refreshes the token and repeats the request once.
+
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -44,7 +43,7 @@ axios.interceptors.response.use(
       url.includes("/api/users/refresh") ||
       url.includes("/api/users/logout");
 
-    // Only handle a first 401 on a normal call, and only if we have a refresh token
+  
     if (
       status !== 401 ||
       !original ||
@@ -61,7 +60,7 @@ axios.interceptors.response.use(
       original.headers.Authorization = `Bearer ${newToken}`;
       return axios(original);
     } catch (refreshError) {
-      // The refresh token is dead too: log the user out
+ 
       clearLogin();
       return Promise.reject(error);
     }
@@ -81,7 +80,7 @@ export function useAuth() {
     const accessToken = localStorage.getItem("token");
     const refreshToken = localStorage.getItem("refreshToken");
 
-    // Tell the server to blacklist both tokens (we do not wait for the answer)
+  
     if (accessToken) {
       axios
         .post(

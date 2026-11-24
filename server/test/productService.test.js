@@ -1,5 +1,4 @@
-// Tests for services/productService.js
-// We replace the data layer with fake functions, so no real database is used.
+
 jest.mock('../data/productData', () => ({
   getAllProducts: jest.fn(),
   getAllVariant: jest.fn(),

@@ -76,11 +76,11 @@ async function generateEmbedding(text) {
     );
     return response.embeddings[0].values;
 }
-// Read a PDF, cut it up, make numbers for each chunk, and save everything.
+
 async function ingestPdf(filePath, filename, originalFilename, fileSize, productId) {
   const chunks = await chunkPDF(filePath);
 
-  // make the numbers first (slow part, no database lock held while waiting)
+  
   const embeddings = [];
   for (const chunk of chunks) {
     embeddings.push(await generateEmbedding(chunk.text));
@@ -107,11 +107,9 @@ async function ingestPdf(filePath, filename, originalFilename, fileSize, product
     connection.release();
   }
 }
-// Answer a question using only the stored PDF chunks.
-// "history" is the last few messages of the chat: [{ from: 'you' | 'assistant', text }]
+
 async function answerQuestion(question, history = []) {
-  // Search with the customer's last question plus the new one, so a short
-  // follow-up like "and uniforms?" still finds the right chunks
+
   const lastQuestion = [...history].reverse().find((m) => m.from === 'you');
   const searchText = lastQuestion ? lastQuestion.text + ' ' + question : question;
 
@@ -124,7 +122,7 @@ async function answerQuestion(question, history = []) {
 
   const context = closest.map((c) => c.chunk_text).join('\n---\n');
 
-  // The earlier messages help Gemini understand what the new question refers to
+
   const conversation = history
     .map((m) => (m.from === 'you' ? 'Customer: ' : 'Assistant: ') + m.text)
     .join('\n');

@@ -1,8 +1,8 @@
 const pool = require('../database');
 
-// filters is optional: { search, minPrice, maxPrice, fit, gender, category }
+
 async function getAllProducts(filters = {}) {
-    // Only visible products go to the shop (hidden ones have is_active = 0)
+
     let sql = `SELECT
         p.product_id,
         p.name,

@@ -6,9 +6,9 @@ create table customer(
     customer_id  int unsigned not null auto_increment primary key,
     name  varchar(255) not null,
     email  varchar(255) not null unique,
-    password  varchar(255) not null,   -- stores the bcrypt hash, never the real password
+    password  varchar(255) not null,   
     phone  varchar(50) not null,
-    role  enum('customer','admin') not null default 'customer',   -- added
+    role  enum('customer','admin') not null default 'customer',   
     created_at  datetime not null default current_timestamp
 ) engine = innodb;
 
@@ -33,7 +33,7 @@ create table address(
 create table category(
     category_id  int unsigned not null auto_increment primary key,
     name  varchar(255) not null,
-    slug  varchar(100) not null unique,   -- added, used in URLs like /shop?category=shirts
+    slug  varchar(100) not null unique,   
     is_customisable  tinyint(1) not null default 0
 ) engine = innodb;
 
@@ -43,14 +43,14 @@ create table product(
     name  varchar(255) not null,
     description  text,
     price  decimal(10,2) not null,
-    fit  enum('oversized','boxy','regular','slim') not null default 'regular',   -- added
-    fabric  varchar(80),   -- added
-    gsm  smallint unsigned,   -- added
-    gender  enum('men','women','unisex') not null default 'unisex',   -- added
-    drop_name  varchar(80),   -- added
-    care_instructions  varchar(255),   -- added
-    is_active  tinyint(1) not null default 1,   -- added, hide a product instead of deleting it
-    created_at  datetime not null default current_timestamp,   -- added
+    fit  enum('oversized','boxy','regular','slim') not null default 'regular',  
+    fabric  varchar(80),   
+    gsm  smallint unsigned,   
+    gender  enum('men','women','unisex') not null default 'unisex',  
+    drop_name  varchar(80),  
+    care_instructions  varchar(255),  
+    is_active  tinyint(1) not null default 1,  
+    created_at  datetime not null default current_timestamp,  
     category_id  int unsigned not null,
 
     constraint fk_product_category
@@ -60,7 +60,7 @@ create table product(
 ) engine = innodb;
 
 
-create table product_image(   -- added
+create table product_image(  
     product_image_id  int unsigned not null auto_increment primary key,
     url  varchar(500) not null,
     color  varchar(30),
@@ -74,13 +74,13 @@ create table product_image(   -- added
 ) engine = innodb;
 
 
-create table tag(   -- added
+create table tag(  
     tag_id  int unsigned not null auto_increment primary key,
     name  varchar(50) not null unique
 ) engine = innodb;
 
 
-create table product_tag(   -- added, many-to-many between product and tag
+create table product_tag(   
     product_id  int unsigned not null,
     tag_id  int unsigned not null,
     primary key (product_id, tag_id),
@@ -103,8 +103,8 @@ create table variant(
     size  varchar(20),
     color  varchar(30),
     stock_qty  int unsigned not null default 0,
-    set_name  varchar(30),   -- "Top Only" or "Top + Shorts", empty for normal items
-    price  decimal(10,2) null,   -- empty means use the product price
+    set_name  varchar(30),   
+    price  decimal(10,2) null,   
     product_id  int unsigned not null,
 
      unique key uq_variant_combo (product_id, size, color, set_name),
@@ -142,7 +142,7 @@ create table orders(
 create table order_item(
     order_item_id  int unsigned not null auto_increment primary key,
     quantity  int unsigned not null,
-    unit_price  decimal(10,2) not null,   -- price at the time of purchase
+    unit_price  decimal(10,2) not null,   
     order_id  int unsigned not null,
     variant_id  int unsigned not null,
 
@@ -180,8 +180,8 @@ create table payment(
     method  varchar(30) not null,
     amount  decimal(10,2) not null,
     status  varchar(20) not null default 'pending',
-    stripe_payment_id  varchar(255) null,   -- added, for Stripe if the teacher confirms it
-    created_at  datetime not null default current_timestamp,   -- added
+    stripe_payment_id  varchar(255) null,  
+    created_at  datetime not null default current_timestamp,  
     order_id  int unsigned not null,
 
     constraint fk_payment_order
@@ -216,36 +216,42 @@ create table order_status_history(
 -- AI assistant (RAG): uploaded PDFs and their text chunks
 -- ---------------------------------------------------------
 
-CREATE TABLE pdf (
-  pdf_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  filename VARCHAR(255) NOT NULL,
-  original_filename VARCHAR(255) NOT NULL,
-  file_path VARCHAR(500) NOT NULL,
-  file_size INT DEFAULT NULL,
-  upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (pdf_id)
-);
+create table pdf (
+  pdf_id int unsigned not null auto_increment primary key,
+  filename varchar(255) not null,
+  original_filename varchar(255) not null,
+  file_path varchar(500) not null,
+  file_size int default null,
+  upload_date datetime default current_stamp,
 
-CREATE TABLE pdf_chunk (
-  chunk_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  pdf_id INT UNSIGNED NOT NULL,
-  chunk_text TEXT NOT NULL,
-  chunk_order INT NOT NULL,
-  embedding VECTOR(768) NOT NULL,
-  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (chunk_id),
+)engine = innodb;
+
+create table pdf_chunk (
+  chunk_id int unsigned not null auto_increment, primary key,
+  pdf_id int unsigned not null,
+  chunk_text text not null,
+  chunk_order int not null,
+  embedding vector(768) not null,
+  created_at timestamp null default current_stamp,
+  
   KEY idx_pdf_id (pdf_id),
   VECTOR KEY (embedding) DISTANCE=cosine,
-  CONSTRAINT fk_chunk_pdf FOREIGN KEY (pdf_id) REFERENCES pdf (pdf_id) ON DELETE CASCADE
-);
+
+  constraint fk_chunk_pdf 
+  foreign key (pdf_id) references pdf (pdf_id) 
+  on delete cascade
+)engine = innodb;
 
 -- each product can have one PDF for the assistant
-ALTER TABLE product
-  ADD COLUMN pdf_id INT UNSIGNED DEFAULT NULL,
-  ADD KEY fk_product_pdf (pdf_id),
-  ADD CONSTRAINT fk_product_pdf FOREIGN KEY (pdf_id) REFERENCES pdf (pdf_id) ON DELETE SET NULL;
+alter table product
+add colomn pdf_id int unsigned default null,
+add key fk_product_pdf (pdf_id),
+add constraint fk_product_pdf
+foreign key (pdf_id) references pdf(pdf_id)
+on delete set null;
+
 -- JWT logout: tokens that can no longer be used
 create table token_blacklist(
-    token VARCHAR(512) PRIMARY KEY,
-    expires_at DATETIME
-);
+    token varchar(512) primary key,
+    expires_at datetime
+) engine = innodb;

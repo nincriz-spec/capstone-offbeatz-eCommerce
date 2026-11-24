@@ -1,8 +1,8 @@
 const pool = require('../database');
 
-// filters is optional: { orderId }
+
 async function getStatusHistory(filters = {}) {
-    // Query builder: start with WHERE 1, add AND ... only for filters that were used
+
     let sql = `SELECT h.history_id, h.order_id, h.from_status, h.to_status, h.changed_at,
                       a.name AS changed_by_name
                FROM order_status_history h

@@ -14,10 +14,10 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    // Reuse the same login the customers use (checks email + password)
+
     const { token } = await userService.loginUser(email, password);
 
-    // Open the token to read the role (we just made it ourselves, so we trust it)
+   
     const payload = jwt.decode(token);
     if (payload.role !== 'admin') {
       throw new Error('This account is not an admin');
@@ -25,7 +25,7 @@ async function login(req, res) {
 
     const profile = await userService.getProfile(payload.customerId);
 
-    // New session id on login (session security)
+   
     req.session.regenerate((err) => {
       if (err) {
         logger.error(`admin session regenerate failed: ${err.message}`);
@@ -58,7 +58,7 @@ function showHome(req, res) {
 
 async function showOrders(req, res) {
   try {
-    // What the admin typed in the filter form (comes from the web address)
+    
     const filters = {
       status: req.query.status,
       search: req.query.search,
@@ -68,7 +68,7 @@ async function showOrders(req, res) {
 
     const orders = await adminService.getAllOrders(filters);
 
-    // Values to put back into the form boxes after searching
+    
     const values = {
       status: typeof filters.status === 'string' ? filters.status : '',
       search: typeof filters.search === 'string' ? filters.search : '',
@@ -76,7 +76,7 @@ async function showOrders(req, res) {
       toDate: typeof filters.toDate === 'string' ? filters.toDate : '',
     };
 
-    // A one-time message (like "Order updated"), then we forget it
+
     const flash = req.session.flash || null;
     delete req.session.flash;
 

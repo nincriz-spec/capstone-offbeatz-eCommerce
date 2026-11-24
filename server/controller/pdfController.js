@@ -25,13 +25,12 @@ async function uploadPdf(req, res) {
       return res.status(400).json({ message: 'File is too big (max 5 MB)' });
     }
 
-    // make sure the uploads folder exists, then save the file with a safe unique name
+
     fs.mkdirSync(UPLOAD_DIR, { recursive: true });
     const savedName = Date.now() + '.pdf';
     const savedPath = path.join(UPLOAD_DIR, savedName);
     await file.mv(savedPath);
 
-    // chunk, embed and store
     const result = await ragService.ingestPdf(
       savedPath,
       savedName,

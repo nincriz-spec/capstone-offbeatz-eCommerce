@@ -18,7 +18,7 @@ async function createOrder(customerId, address, total, lines) {
     try {
         await connection.beginTransaction();
 
-        // 1. Does this customer already have this exact address?
+    
         const [found] = await connection.execute(
             `SELECT address_id FROM address
              WHERE customer_id = ? AND street = ? AND block = ? AND city = ? AND postal_code = ?
@@ -28,10 +28,10 @@ async function createOrder(customerId, address, total, lines) {
 
         let addressId;
         if (found.length > 0) {
-            // yes: reuse it
+      
             addressId = found[0].address_id;
         } else {
-            // no: save a new one
+       
             const [addressResult] = await connection.execute(
                 'INSERT INTO address (customer_id, street, block, city, postal_code) VALUES (?, ?, ?, ?, ?)',
                 [customerId, address.street, address.block, address.city, address.postalCode]
@@ -51,8 +51,7 @@ async function createOrder(customerId, address, total, lines) {
                 [orderId, line.variantId, line.quantity, line.unitPrice]
             );
 
-            // Take the stock only if there is enough left. The check and the subtraction
-            // happen in one step, so two customers cannot both take the last item.
+    
             const [stockResult] = await connection.execute(
                 'UPDATE variant SET stock_qty = stock_qty - ? WHERE variant_id = ? AND stock_qty >= ?',
                 [line.quantity, line.variantId, line.quantity]
@@ -108,7 +107,7 @@ async function cancelOrder(orderId, customerId) {
     try {
         await connection.beginTransaction();
 
-        // lock this order row and check it belongs to this customer
+       
         const [rows] = await connection.execute(
             'SELECT status FROM orders WHERE order_id = ? AND customer_id = ? FOR UPDATE',
             [orderId, customerId]
@@ -120,7 +119,6 @@ async function cancelOrder(orderId, customerId) {
             throw new Error('Only orders that are still pending can be cancelled');
         }
 
-        // put the stock back
         const [items] = await connection.execute(
             'SELECT variant_id, quantity FROM order_item WHERE order_id = ?',
             [orderId]

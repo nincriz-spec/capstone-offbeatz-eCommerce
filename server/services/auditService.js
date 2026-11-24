@@ -1,6 +1,6 @@
 const auditData = require('../data/auditData');
 
-// Keep only a valid order number. Anything strange is ignored.
+
 async function getStatusHistory(filters = {}) {
     const clean = {};
 

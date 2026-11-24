@@ -5,7 +5,7 @@ async function showAudit(req, res) {
   try {
     const rows = await auditService.getStatusHistory({ orderId: req.query.orderId });
 
-    // Put what was typed back in the box
+    
     const values = {
       orderId: typeof req.query.orderId === 'string' ? req.query.orderId : '',
     };

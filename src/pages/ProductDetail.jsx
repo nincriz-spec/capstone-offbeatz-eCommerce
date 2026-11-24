@@ -38,7 +38,7 @@ export default function ProductDetail() {
     (v) => v.color === color && v.size === size
   );
 
-  // Use the variant's own price if it has one, otherwise the product price
+
   const shownPrice = selected && selected.price != null ? selected.price : product.price;
 
   let stockMessage;

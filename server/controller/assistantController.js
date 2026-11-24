@@ -1,11 +1,10 @@
 const ragService = require('../services/ragService');
 const logger = require('../logger');
 
-const MAX_HISTORY = 4;     // how many earlier messages we accept
-const MAX_TEXT = 500;      // longest accepted message
+const MAX_HISTORY = 4;     
+const MAX_TEXT = 500;     
 
-// Anything from the browser can be faked, so keep only what we trust:
-// a list of messages with a known sender, the last few, each cut short.
+
 function cleanHistory(history) {
   if (!Array.isArray(history)) {
     return [];

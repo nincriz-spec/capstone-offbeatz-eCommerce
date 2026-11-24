@@ -2,7 +2,7 @@ const userAdminData = require('../data/userAdminData');
 
 const ROLES = ['customer', 'admin'];
 
-// Keep only filters that are safe and valid
+
 function cleanFilters(query = {}) {
     const filters = {};
 

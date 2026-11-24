@@ -3,7 +3,7 @@ const productAdminData = require('../data/productAdminData');
 const fitOptions = ['oversized', 'boxy', 'regular', 'slim'];
 const genderOptions = ['men', 'women', 'unisex'];
 
-// Clean one text field: trim it, check the length, empty becomes null
+
 function cleanText(value, max, label, required) {
     const text = typeof value === 'string' ? value.trim() : '';
     if (required && !text) {
@@ -15,7 +15,7 @@ function cleanText(value, max, label, required) {
     return text || null;
 }
 
-// Check the whole form. Throws an Error with a friendly message if something is wrong.
+
 function cleanProduct(form, categories) {
     const name = cleanText(form.name, 255, 'Name', true);
     const description = cleanText(form.description, 5000, 'Description', false);

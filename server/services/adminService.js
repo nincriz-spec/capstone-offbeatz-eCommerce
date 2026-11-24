@@ -1,6 +1,6 @@
 const adminData = require('../data/adminData');
 
-// which status can go to which
+
 const allowedNext = {
     pending: ['paid', 'shipped', 'cancelled'],
     paid: ['shipped', 'cancelled'],
@@ -11,7 +11,7 @@ const allowedNext = {
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 
-// Keep only filters that are valid. Anything strange is ignored.
+
 function cleanFilters(filters = {}) {
     const clean = {};
 

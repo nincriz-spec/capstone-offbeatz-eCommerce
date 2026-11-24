@@ -1,8 +1,8 @@
 const pool = require('../database');
 
-// filters is optional: { status, search, fromDate, toDate }
+
 async function getAllOrders(filters = {}) {
-    // Query builder pattern: start with WHERE 1, then add AND ... for each filter used
+    
     let sql = `SELECT o.order_id, o.status, CAST(o.total AS DOUBLE) AS total, o.created_at,
                       c.name AS customer_name, c.email AS customer_email
                FROM orders o
@@ -26,7 +26,7 @@ async function getAllOrders(filters = {}) {
     }
 
     if (filters.toDate) {
-        // up to the END of the chosen day
+       
         sql += ' AND o.created_at < DATE_ADD(?, INTERVAL 1 DAY)';
         bindings.push(filters.toDate);
     }
@@ -55,7 +55,7 @@ async function updateOrderStatus(orderId, newStatus, adminId, allowedNext) {
     try {
         await connection.beginTransaction();
 
-        // lock the order row and read its current status
+    
         const [rows] = await connection.execute(
             'SELECT status FROM orders WHERE order_id = ? FOR UPDATE',
             [orderId]
@@ -70,7 +70,7 @@ async function updateOrderStatus(orderId, newStatus, adminId, allowedNext) {
             throw new Error('Cannot change an order from ' + current + ' to ' + newStatus);
         }
 
-        // cancelling puts the stock back
+        
         if (newStatus === 'cancelled') {
             const [items] = await connection.execute(
                 'SELECT variant_id, quantity FROM order_item WHERE order_id = ?',

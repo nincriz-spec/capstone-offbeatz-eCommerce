@@ -15,7 +15,7 @@ const categories = [
 const FITS = ["oversized", "boxy", "regular", "slim"];
 const GENDERS = ["men", "women", "unisex"];
 
-// Every filter the page understands
+
 const FILTER_NAMES = ["category", "search", "fit", "gender", "minPrice", "maxPrice"];
 
 export default function Shop() {
@@ -23,7 +23,7 @@ export default function Shop() {
   const [, setLocation] = useLocation();
   const params = new URLSearchParams(search);
 
-  // Read the filters from the URL (only the ones that have a value)
+
   const filters = {};
   FILTER_NAMES.forEach((name) => {
     const value = params.get(name);
@@ -34,7 +34,7 @@ export default function Shop() {
 
   const { products, loading } = useProducts(filters);
 
-  // The values typed in the filter bar. They start from the URL.
+
   const [form, setForm] = useState({});
   useEffect(() => {
     setForm({
@@ -50,7 +50,7 @@ export default function Shop() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  // Apply: put the typed values into the URL, which reloads the products
+
   function handleSubmit(e) {
     e.preventDefault();
     const next = new URLSearchParams();
@@ -67,7 +67,7 @@ export default function Shop() {
     setLocation(qs ? `/shop?${qs}` : "/shop");
   }
 
-  // A category link keeps the other filters
+
   function linkFor(slug) {
     const next = new URLSearchParams(search);
     if (slug) {
