@@ -24,7 +24,7 @@ export default function Login() {
       showMessage("Logged in", "success");
       navigate("/");
     } catch (err) {
-      showMessage("Invalid email or password", "error");
+      showMessage("Invalid credentials", "error");
     }
   }
   
